@@ -1,5 +1,6 @@
 #include "gtest/gtest.h"
-#include "Core/Vector.h"
+#include "core/sceneloader.h"
+#include "core/vector.h"
 
 
 TEST(VectorTest,BasicOperationTest)
@@ -8,3 +9,12 @@ TEST(VectorTest,BasicOperationTest)
 	EXPECT_TRUE(b-a == Vector(2,2,2));
 }
 
+TEST(VisitorTest, VisitVectorTest) 
+{
+	Vector b;
+	SceneLoader a("config_test.txt");
+	b.accept(&a);
+	EXPECT_EQ(b.getX(),1);
+	EXPECT_EQ(b.getY(),2);
+	EXPECT_EQ(b.getZ(),3);
+}
