@@ -1,4 +1,4 @@
-#include "Color.h"
+#include "color.h"
 
 Color::Color() {
 	r = g = b = 0;

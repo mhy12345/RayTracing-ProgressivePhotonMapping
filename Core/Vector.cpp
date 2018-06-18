@@ -1,10 +1,16 @@
-#include "Vector.h"
+#include "vector.h"
+#include "sceneloader.h"
 
 Vector :: Vector() {
 	x = 0 , y = 0, z = 0;
 }
 
+
 Vector :: Vector(double x,double y,double z) : x(x), y(y), z(z){
+}
+
+void Vector :: accept(SceneLoader sl) {
+	sl("ADDRESS") >> x >> y >> z;
 }
 
 Vector XMul(const Vector &a,const Vector &b){
