@@ -23,8 +23,7 @@ target_link_libraries(unittest gtest gmock_main Core_LIBS)
 
 add_custom_command(TARGET main
 	POST_BUILD
-	COMMAND ${CMAKE_COMMAND} -E copy ${DRAW_POLYGON_SOURCE_DIR}/config.txt config.txt
-	COMMAND ${CMAKE_COMMAND} -E copy ${DRAW_POLYGON_SOURCE_DIR}/config_test.txt config_test.txt
-	COMMENT "Copy the polygons.txt into directory..."
+	COMMAND ${CMAKE_COMMAND} -E create_symlink ${DRAW_POLYGON_SOURCE_DIR}/configures configures
+	COMMENT "Copy the configures into directory..."
 	)
 

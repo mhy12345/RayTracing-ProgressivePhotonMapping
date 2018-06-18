@@ -1,0 +1,6 @@
+{
+	Position = Vector
+	{
+		ADDRESS = 1 2 3
+	}
+}

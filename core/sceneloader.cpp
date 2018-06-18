@@ -29,16 +29,22 @@ std::string trim(std::string s)
 	return s;
 }
 
-SceneLoader::SceneLoader(const char* filename) : std::stringstream() {
-	std::ifstream handler;
-	handler = std::ifstream(filename);
-	std::istreambuf_iterator<char>beg(handler), end;
-	txt = std::string(beg, end);
-	handler.close();
+SceneLoader::SceneLoader(){
 }
 
+SceneLoader::SceneLoader(const char* filename) {
+	std::ifstream handler;
+	handler = std::ifstream(filename);
+	if (!handler) {
+		throw std::runtime_error("File not found <"+std::string(filename)+">");
+	}
+	std::istreambuf_iterator<char> beg(handler), end;
+	std::string txt = std::string(beg, end);
+	handler.close();
+	(*this) = SceneLoader(txt);
+}
 
-void SceneLoader::prepare() {
+SceneLoader::SceneLoader(std::string txt) {
 	std::stringstream ss;
 	std::string last_item = "$";
 	std::string zipped_txt = "";
@@ -70,12 +76,21 @@ void SceneLoader::prepare() {
 		}
 	}
 }
-SceneLoader& SceneLoader::operator()(const char* item_name) {
-	this->clear();
+
+std::stringstream& SceneLoader::operator()(const char* item_name) {
+	static std::stringstream ss;
 	if (mapper.find(trim(item_name)) == mapper.end()) {
 		throw std::runtime_error("The item "+std::string(item_name)+" is not found");
-		return (*this);
+		return ss;
 	}
-	(*this) << mapper[item_name];
-	return *this;
+	ss << mapper[item_name];
+	return ss;
+}
+
+SceneLoader SceneLoader::subScene(const char* item_name) {
+	if (mapper.find(trim(item_name)) == mapper.end()) {
+		throw std::runtime_error("The item "+std::string(item_name)+" is not found");
+		return SceneLoader();
+	}
+	return SceneLoader(mapper[item_name]);
 }

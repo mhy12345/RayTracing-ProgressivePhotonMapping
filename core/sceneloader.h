@@ -9,15 +9,15 @@
 #include "gobject.h"
 class GObject;
 
-class SceneLoader : public std::stringstream {
+class SceneLoader{
 	private:
-		std::string txt;
 		std::map<std::string,std::string> mapper;
 	public:
+		SceneLoader();
+		SceneLoader(std::string txt);
 		SceneLoader(const char* filename);
-		void prepare();
-		SceneLoader& operator()(const char* item_name);
-		void set_children(std::string name, GObject* obj);
+		SceneLoader subScene(const char* item_name);
+		std::stringstream& operator()(const char* item_name);
 };
 
 #endif

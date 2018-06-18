@@ -7,7 +7,7 @@ class GObject {
 	public:
 		GObject();
 		virtual ~GObject();
-		virtual void accept(SceneLoader* sl) = 0;
+		virtual void accept(SceneLoader sl) = 0;
 };
 
 #endif
