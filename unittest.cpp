@@ -1,7 +1,9 @@
 #include "gtest/gtest.h"
-#include "core/sceneloader.h"
 #include "core/vector.h"
 #include "core/light.h"
+#include "json/json.h"
+#include <iostream>
+#include <fstream>
 
 
 TEST(VectorTest,BasicOperation)
@@ -13,8 +15,12 @@ TEST(VectorTest,BasicOperation)
 TEST(SceneLoaderTest, Vector) 
 {
 	Vector b;
-	SceneLoader a("configures/config_test_vector.txt");
-	b.accept(a);
+	std::ifstream ifs("configures/config_test_vector.json");
+	Json::CharReaderBuilder reader;
+	Json::Value root;  
+	JSONCPP_STRING errs;
+	Json::parseFromStream(reader, ifs, &root, &errs);
+	b.accept(root);
 	EXPECT_EQ(b.getX(),1);
 	EXPECT_EQ(b.getY(),2);
 	EXPECT_EQ(b.getZ(),3);
@@ -22,8 +28,16 @@ TEST(SceneLoaderTest, Vector)
 
 TEST(SceneLoaderTest, Light) 
 {
-	Light l;
-	SceneLoader a("configures/config_test_light.txt");
-	l.accept(a);
-	EXPECT_EQ(l.getPosition().getX(),1);
+	Light *l = new AreaLight();
+	std::ifstream ifs("configures/config_test_light.json");
+	Json::CharReaderBuilder reader;
+	Json::Value root;  
+	JSONCPP_STRING errs;
+	Json::parseFromStream(reader, ifs, &root, &errs);
+	l->accept(root);
+	EXPECT_EQ(l->getColor().getR(),1);
+}
+
+TEST(CameraTest, ShowAPicture)
+{
 }

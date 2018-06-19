@@ -1,18 +1,29 @@
 #ifndef LIGHT_H
 #define LIGHT_H
 
-#include "gobject.h"
-#include "sceneloader.h"
 #include "vector.h"
 #include "color.h"
 
-class Light : GObject {
-	private:
-		Vector position; 
+class Light : Object {
+	protected:
 		Color color;
 	public:
-		virtual void accept(SceneLoader sl);
-		const Vector& getPosition() {return position;}
+		Light();
+		virtual ~Light();
+		virtual void accept(const Json::Value& val) = 0;
+		const Color& getColor() {
+			return color;
+		}
+};
+
+class AreaLight : public Light {
+	private:
+		Vector position;
+		Vector dx,dy;
+	public:
+		AreaLight(){}
+		void accept(const Json::Value& val);
+		bool collideWith(const Ray& ray);
 };
 
 #endif
