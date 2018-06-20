@@ -9,16 +9,17 @@ void AreaLight :: accept(const Json::Value& val) {
 	O.accept(val["position"]);
 	dx.accept(val["dx"]);
 	dy.accept(val["dy"]);
-	LOG(INFO)<<"AreaLight : Data accepted."<<std::endl;
+	DLOG(INFO)<<"AreaLight : Data accepted."<<std::endl;
 }
 
 bool AreaLight :: collideWith(const Vector& rayO, const Vector& rayD) {
 	assert(rayD.isUnit());
-	LOG(INFO)<<"Area Light : "<<rayO.description()<<" "<<rayD.description()<<std::endl;
+	DLOG(INFO)<<"Area Light : "<<rayO.description()<<" "<<rayD.description()<<std::endl;
 	Vector N = (dx*dy).unit();
 	double d = -(N^O);
 	double t = -(d+(N^rayO))/(N^rayD);
 	if (!isfinite(t))return false;
+	if (t<feps)return false;
 	collision.dist = t;
 	collision.C = rayO + t*rayD;
 	double r1 = ((collision.C - O)^dx)/dx.sqrlen();
@@ -27,7 +28,7 @@ bool AreaLight :: collideWith(const Vector& rayO, const Vector& rayD) {
 		return false;
 	collision.N = N;
 	collision.D = N*(rayD.reverse()^N)*2-rayD.reverse();
-	LOG(INFO)<<"Area Light <"<<name<<">: hitted"<<std::endl;
+	DLOG(INFO)<<"Area Light <"<<name<<">: hitted"<<std::endl;
 	return true;
 }
 
@@ -36,28 +37,37 @@ Vector AreaLight::getCenter()const {
 }
 
 double AreaLight::getShade(const Vector& _rayO,std::vector<Object*> olist, int shade_quality)const {
-	LOG(INFO)<<"Calculate shade at <"<<_rayO.description()<<">"<<std::endl;
+	DLOG(INFO)<<"Calculate shade at <"<<_rayO.description()<<">"<<std::endl;
 	Vector rayO = _rayO;
 	int success_count = 0;
 	for (int i=0;i<3;i++) {
 		for (int j=0;j<3;j++) {
 			for (int k=0;k<shade_quality;k++) {
 				Vector checkO = rayO;
-				Vector checkT = (O + dx/3*(i + rand()/RAND_MAX) + dy/3*(i + rand()/RAND_MAX));
-				Vector checkD = (rayO - checkT).unit();
-				double dist = (rayO - checkT).len();
+				Vector checkT = (O + dx/3*(i + rand()*1.0/RAND_MAX) + dy/3*(j + rand()*1.0/RAND_MAX));
+				Vector checkD = (checkT - rayO).unit();
+				double dist = (checkT - rayO).len();
 				bool flag = true;
 				for (auto &w: olist)
-					if (w->collideWith(checkO,checkD) && w->getCollision().dist < dist) {
+				{
+					bool flg;
+					if ((flg = w->collideWith(checkO,checkD)) && w->getCollision().dist < dist) {
 						flag = false;
+						DLOG(INFO)<<"SHADED INFO : "<<flg<<" "<<w->getCollision().dist<<" "<<dist<<std::endl;
 						break;
+					}
 				}
 				if (flag)
+				{
 					success_count ++;
+					DLOG(INFO)<<"The area was not shaded... +1"<<std::endl;
+				}
+				else
+					DLOG(INFO)<<"The area was shaded... +0"<<std::endl;
 			}
 		}
 	}
-	double shade = success_count / (9*shade_quality);
-	LOG(INFO)<<"Area Light <"<<name<<"> - shade : "<<shade<<std::endl;
+	double shade = success_count / (9.0*shade_quality);
+	DLOG(INFO)<<"Area Light <"<<name<<"> - shade : "<<shade<<std::endl;
 	return shade;
 }

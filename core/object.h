@@ -4,6 +4,7 @@
 #include "json/json.h"
 #include "color.h"
 #include "vector.h"
+#include "texture.h"
 
 struct Collision {
 	Vector C;//The Center of Collision
@@ -27,7 +28,7 @@ class Object {
 		Collision collision;
 		Material material;
 		std::string name;
-		Color color;
+		Texture* texture;
 	public:
 		Object();
 		virtual ~Object();
@@ -38,7 +39,7 @@ class Object {
 		const Material& getMaterial()const {return material;}
 
 		virtual bool collideWith(const Vector& rayO, const Vector& rayD) = 0;
-		Color getColor()const{return color;}
+		virtual Color getColor(const Vector &pos)const = 0;
 		std::string getName()const{return name;}
 };
 

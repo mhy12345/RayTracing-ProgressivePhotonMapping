@@ -12,7 +12,7 @@ class Sphere : public Object {
 	public:
 		Sphere();
 		virtual void accept(const Json::Value& val);
-		const Color& getColor()const;
+		Color getColor(const Vector&)const;
 		bool collideWith(const Vector& rayO,const Vector& rayD);
 };
 

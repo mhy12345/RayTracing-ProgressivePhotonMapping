@@ -23,19 +23,18 @@ void PaintBoard::update() {
 			if (!(*board)[(sizX-i-1)*sizY+j])
 				continue;
 			Color& c = *(*board)[(sizX-i-1)*sizY+j];
-			LOG(INFO)<<"("<<c.getR()<<","<<c.getG()<<","<<c.getB()<<") "<<"\t";
 			Vec3f v(c.getR(),c.getG(),c.getB());
 			image->at<Vec3d>(i,j) = v;
 		}
-		LOG(INFO)<<std::endl;
 	}
+}
+void PaintBoard::display() {
+	imshow("picture", *image);
+	waitKey(0);
+}
+void PaintBoard::save() {
 	std::vector<int> compression_params;
 	compression_params.push_back(CV_IMWRITE_PNG_COMPRESSION);
 	compression_params.push_back(9); 
-
 	imwrite("result.bmp", (*image)*255);
-	if (showWindow) {
-		imshow("picture", *image);
-		waitKey(0);
-	}
 }

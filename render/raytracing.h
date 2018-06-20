@@ -24,8 +24,8 @@ class RayTracing{
 		RayTracing();
 		~RayTracing();
 		virtual void accept(const Json::Value& val);
-		Color calcReflection(const Object& obj, int depth, unsigned& hash);
-		Color calcDiffusion(const Object& obj);
+		Color calcReflection(const Object& obj, const Collision& obj_coll, int depth, unsigned& hash);
+		Color calcDiffusion(const Object& obj, const Collision& obj_coll);
 
 		const Object* findCollidedObject(const Vector &rayO,const Vector& rayD);
 		const Light* findCollidedLight(const Vector& rayO,const Vector& rayD);

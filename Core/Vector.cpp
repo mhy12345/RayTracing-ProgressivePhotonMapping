@@ -13,7 +13,7 @@ Vector :: Vector(double x,double y,double z) : x(x), y(y), z(z){
 
 void Vector :: accept(const Json::Value& val) {
 	if (!val.isMember("x") || !val.isMember("y") || !val.isMember("z"))
-		LOG(ERROR)<<"The vector not found..."<<std::endl;
+		DLOG(ERROR)<<"The vector not found..."<<std::endl;
 	x = val["x"].asDouble();
 	y = val["y"].asDouble();
 	z = val["z"].asDouble();

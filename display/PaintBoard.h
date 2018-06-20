@@ -11,12 +11,12 @@ class PaintBoard {
 		cv::Mat *image;
 		Color ***board;
 		int sizX,sizY;
-		bool showWindow;
 	public:
 		PaintBoard();
-		void setShowWindow(bool flag) { showWindow	 = flag;}
 		void init(int sizX,int sizY,Color*** _board);
 		void update();
+		void display();
+		void save();
 };
 
 #endif

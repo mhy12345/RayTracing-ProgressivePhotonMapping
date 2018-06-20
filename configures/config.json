@@ -17,10 +17,10 @@
 		{
 			"type":"area_light",
 			"name":"light1",
-			"position":{"x":14.9,"y":-10,"z":10},
-			"dx" : {"x":0,"y":0,"z":20},
+			"position":{"x":14.9,"y":-10,"z":20},
+			"dx" : {"x":0,"y":0,"z":10},
 			"dy" : {"x":0,"y":20,"z":0},
-			"color": {"r":1,"g":1,"b":1},
+			"texture": {"type":"pure","r":1,"g":1,"b":1},
 			"material":{"refl":0,"diff":0,"spec":0}
 		}
 	],
@@ -31,7 +31,7 @@
 			"center":{"x":0,"y":0,"z":20},
 			"radius":10,
 			"material":{"refl":0.5,"diff":0.1,"spec":0.4},
-			"color": {"r":1,"g":0,"b":1}
+			"texture": {"type":"pure","r":1,"g":0,"b":1}
 		}, 
 		{
 			"type":"plane",
@@ -39,7 +39,7 @@
 			"position":{"x":-15,"y":-30,"z":40},
 			"dx":{"x":30,"y":0,"z":0},
 			"dy":{"x":0,"y":60,"z":0},
-			"color":{"r":0,"g":1,"b":1},
+			"texture":{"type":"pure","r":0,"g":1,"b":1},
 			"material":{"refl":0,"diff":1.0,"spec":0}
 		},
 		{
@@ -48,7 +48,7 @@
 			"position":{"x":-15,"y":-30,"z":-40},
 			"dx":{"x":30,"y":0,"z":0},
 			"dy":{"x":0,"y":60,"z":0},
-			"color":{"r":1,"g":0,"b":0},
+			"texture":{"type":"pure","r":1,"g":0,"b":0},
 			"material":{"refl":0,"diff":1.0,"spec":0}
 		},
 		{
@@ -57,7 +57,7 @@
 			"position":{"x":-15,"y":-30,"z":-20},
 			"dx":{"x":0,"y":0,"z":80},
 			"dy":{"x":30,"y":0,"z":0},
-			"color":{"r":1,"g":0,"b":1},
+			"texture":{"type":"pure","r":1,"g":0,"b":1},
 			"material":{"refl":0.4,"diff":0.5,"spec":0.1}
 		},
 		{
@@ -66,7 +66,7 @@
 			"position":{"x":-15,"y":30,"z":-20},
 			"dx":{"x":0,"y":0,"z":80},
 			"dy":{"x":30,"y":0,"z":0},
-			"color":{"r":0,"g":0,"b":1},
+			"texture":{"type":"pure","r":0,"g":0,"b":1},
 			"material":{"refl":0.4,"diff":0.5,"spec":0.1}
 		},
 		{
@@ -75,7 +75,7 @@
 			"position":{"x":15,"y":-30,"z":-20},
 			"dx":{"x":0,"y":0,"z":80},
 			"dy":{"x":0,"y":60,"z":0},
-			"color":{"r":1,"g":1,"b":0},
+			"texture":{"type":"pure","r":1,"g":1,"b":0},
 			"material":{"refl":0,"diff":1.0,"spec":0}
 		},
 		{
@@ -84,12 +84,16 @@
 			"position":{"x":-15,"y":-30,"z":-20},
 			"dx":{"x":0,"y":0,"z":80},
 			"dy":{"x":0,"y":60,"z":0},
-			"color":{"r":1,"g":1,"b":0},
+			"texture":{
+				"type":"picture",
+				"filename":"materials/floor.jpg",
+				"rx":5,
+				"ry":5
+			},
 			"material":{"refl":0,"diff":1.0,"spec":0}
-		}
-	],
-	"bg_color" : {"r":0.5,"g":0.5,"b":0.5},
-	"shade_quality" : 5,
+		} ],
+	"bg_texture" : {"type":"pure","r":0.5,"g":0.5,"b":0.5},
+	"shade_quality" : 50,
 	"spec_power": 20,
 	"max_depth" : 5
 }

@@ -13,22 +13,28 @@ Object::~Object() {
 
 void Material::accept(const Json::Value& val) {
 	if (!val.isMember("refl"))
-		LOG(ERROR)<<"No refl found in material..."<<std::endl;
+		DLOG(ERROR)<<"No refl found in material..."<<std::endl;
 	refl = val["refl"].asDouble();
 	if (!val.isMember("spec"))
-		LOG(ERROR)<<"No spec found in material..."<<std::endl;
+		DLOG(ERROR)<<"No spec found in material..."<<std::endl;
 	spec = val["spec"].asDouble();
 	if (!val.isMember("diff"))
-		LOG(ERROR)<<"No diff found in material..."<<std::endl;
+		DLOG(ERROR)<<"No diff found in material..."<<std::endl;
 	diff = val["diff"].asDouble();
 }
 
 void Object::accept(const Json::Value& val) {
 	name = val["name"].asString();
-	if (!val.isMember("color")) {
-		LOG(ERROR)<<"No color info find"<<std::endl;
+	if (!val.isMember("texture")) {
+		DLOG(ERROR)<<"No texture info find"<<std::endl;
 	}
-	color.accept(val["color"]);
+	if (val["texture"]["type"] == "pure")
+		texture = new PureColorTexture();
+	else if (val["texture"]["type"] == "picture")
+		texture = new PictureTexture();
+	else
+		DLOG(ERROR)<<"Invalid Texture Type..."<<std::endl;
+	texture->accept(val["texture"]);
 	material.accept(val["material"]);
 }
 

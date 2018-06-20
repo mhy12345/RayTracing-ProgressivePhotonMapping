@@ -26,7 +26,6 @@ int main(int argc, char** args)
 	RT.accept(root);
 	RT.registerPaintBoard(&PB);
 
-
 	RT.run();
 	PB.update();
 	cv::waitKey(0);

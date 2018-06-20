@@ -1,6 +1,8 @@
 #include "color.h"
 #include "glog/logging.h"
 #include <sstream>
+#include <algorithm>
+using namespace std;
 
 Color::Color() {
 	r = g = b = 0;
@@ -8,6 +10,11 @@ Color::Color() {
 
 Color::Color(double r,double g,double b) : r(r),g(g),b(b) {
 }
+
+Color Color::adjust()const {
+	return Color(min(r,1.0),min(g,1.0),min(b,1.0));
+}
+
 
 Color operator +(const Color& a,const Color &b) {
 	return Color(a.r+b.r,a.g+b.g,a.b+b.b);

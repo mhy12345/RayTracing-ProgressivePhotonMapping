@@ -14,16 +14,27 @@ void Plane::accept(const Json::Value& val) {
 	dy.accept(val["dy"]);
 }
 
+Color Plane::getColor(const Vector& pos)const {
+	if (texture->getType() == TEXTURE_PURE_COLOR) {
+		return texture->getColor();
+	}else if (texture->getType() == TEXTURE_PICTURE) {
+		double tx = ((pos - O)^dx)/dx.len();
+		double ty = ((pos - O)^dy)/dy.len();
+		return texture->getColor(tx,ty);
+	}else
+	DLOG(FATAL)<<"The getColor of Plane only support PURE_COLOR_MODE"<<std::endl;
+}
+
 bool Plane::collideWith(const Vector& rayO,const Vector& rayD) {
 	assert(rayD.isUnit());
-	LOG(INFO)<<"Calc Collision : "<<rayO.description()<<" "<<rayD.description()<<std::endl;
+	DLOG(INFO)<<"Calc Collision : "<<rayO.description()<<" "<<rayD.description()<<std::endl;
 	Vector N = (dx*dy).unit();
 	double d = -(N^O);
 	double t = -(d+(N^rayO))/(N^rayD);
 	if (!isfinite(t))return false;
 	if (t < feps) {
 		if (abs(t) < feps) {
-			LOG(WARNING)<<"Plane <"<<name<<">: border ignored"<<std::endl;
+			DLOG(WARNING)<<"Plane <"<<name<<">: border ignored"<<std::endl;
 		}
 		return false;
 	}
@@ -36,7 +47,7 @@ bool Plane::collideWith(const Vector& rayO,const Vector& rayD) {
 		return false;
 	collision.N = collision.face ? N : -N;
 	collision.D = N*(rayD.reverse()^N)*2-rayD.reverse();
-	LOG(INFO)<<"Plane <"<<name<<">: hitted"<<std::endl;
-	LOG(INFO)<<collision.description()<<std::endl;
+	DLOG(INFO)<<"Plane <"<<name<<">: hitted"<<std::endl;
+	DLOG(INFO)<<collision.description()<<std::endl;
 	return true;
 }

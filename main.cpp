@@ -39,10 +39,13 @@ int main(int argc, char** args)
 
 	while (show_graph_flag) {
 		PB.update();
-		usleep(10000000);
+		PB.display();
+		//usleep(10000000);
 	}
 
 	show_graph_flag = false;
 	pthread_join(watcher,NULL);
-	cv::waitKey(0);
+
+	PB.update();
+	PB.save();
 }

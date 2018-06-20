@@ -19,19 +19,19 @@ RayTracing::~RayTracing() {
 }
 
 void RayTracing::accept(const Json::Value& val) {
-	LOG(INFO)<<"RayTracing : "<<val.toStyledString()<<std::endl;
-	LOG(INFO)<<"RayTracing : Init camera"<<std::endl;
+	DLOG(INFO)<<"RayTracing : "<<val.toStyledString()<<std::endl;
+	DLOG(INFO)<<"RayTracing : Init camera"<<std::endl;
 
 	if (val["camera"]["type"].asString() == "default") {
 		camera = new Camera();
 		camera->accept(val["camera"]);
 	}
 
-	LOG(INFO)<<"RayTracing : Init objects"<<std::endl;
+	DLOG(INFO)<<"RayTracing : Init objects"<<std::endl;
 	for (int i=0;i<val["objects"].size();i++) {
 		Json::Value v = val["objects"][i];
 		std::string tag = v["type"].asString();
-		LOG(INFO)<<"RayTracing : "<<tag<<"<"<<v["name"]<<">"<<std::endl;
+		DLOG(INFO)<<"RayTracing : "<<tag<<"<"<<v["name"]<<">"<<std::endl;
 		if (tag == "sphere") {
 			objects.push_back(new Sphere());
 			objects.back()->accept(v);
@@ -40,11 +40,11 @@ void RayTracing::accept(const Json::Value& val) {
 			objects.back()->accept(v);
 		}else if(tag[0] == '#') {
 		}else {
-			LOG(ERROR)<<"Strange Object <"<<tag<<std::endl;
+			DLOG(ERROR)<<"Strange Object <"<<tag<<std::endl;
 		}
 	}
 
-	LOG(INFO)<<"RayTracing : Init lights"<<std::endl;
+	DLOG(INFO)<<"RayTracing : Init lights"<<std::endl;
 	for (int i=0;i<val["lights"].size();i++) {
 		Json::Value v = val["lights"][i];
 		std::string tag = v["type"].asString();
@@ -55,7 +55,7 @@ void RayTracing::accept(const Json::Value& val) {
 		}else if (tag[0] == '#') {
 
 		}else {
-			LOG(ERROR)<<"Strange Object <"<<tag<<">"<<std::endl;
+			DLOG(ERROR)<<"Strange Object <"<<tag<<">"<<std::endl;
 		}
 	}
 	bg_color = new Color();
@@ -63,31 +63,32 @@ void RayTracing::accept(const Json::Value& val) {
 	max_depth = val["max_depth"].asInt();
 	shade_quality = val["shade_quality"].asInt();
 	spec_power = val["spec_power"].asInt();
-	LOG(INFO)<<"RayTracing : Data accepted"<<std::endl;
+	DLOG(INFO)<<"RayTracing : Data accepted"<<std::endl;
 	board = new Color*[camera->getRx()*camera->getRy()];
 }
 
 
-Color RayTracing::calcReflection(const Object& obj, int depth, unsigned& hash) {
-	LOG(INFO)<<"calcReflection... <d="<<depth<<",h="<<hash<<">"<<std::endl;
-	LOG(INFO)<<"REFLECTION POSITION : "<<obj.getCollision().description()<<std::endl;
+Color RayTracing::calcReflection(const Object& obj, const Collision& obj_coll, int depth, unsigned& hash) {
+	DLOG(INFO)<<"calcReflection... <d="<<depth<<",h="<<hash<<">"<<std::endl;
+	DLOG(INFO)<<"REFLECTION POSITION : "<<obj_coll.description()<<std::endl;
 	if (depth > max_depth) 
 		return *bg_color;
-	return rayTrace(obj.getCollision().C,obj.getCollision().D,depth,hash) * obj.getMaterial().refl;
+	return (rayTrace(obj_coll.C,obj_coll.D,depth,hash) * obj.getMaterial().refl).adjust();
 }
 
-Color RayTracing::calcDiffusion(const Object& obj) {
-	LOG(INFO)<<"calcDiffusion..."<<std::endl;
-	LOG(INFO)<<"DIFFUSION POSITION : "<<obj.getCollision().description()<<std::endl;
-	Color color = obj.getColor();
+Color RayTracing::calcDiffusion(const Object& obj, const Collision& obj_coll) {
+	DLOG(INFO)<<"calcDiffusion..."<<std::endl;
+	Color color = obj.getColor(obj_coll.C);
+	DLOG(INFO)<<"DIFFUSION POSITION : "<<obj_coll.description()<<std::endl;
 	Color ret = color * *bg_color;
 	for (auto &lgt : lights) {
-		double shade = lgt->getShade(obj.getCollision().C,objects,shade_quality);
-		ret += color * lgt->getColor() * shade * obj.getMaterial().diff;
-		double spec_ratio = (obj.getCollision().C-lgt->getCenter()).unit() ^ obj.getCollision().N.unit();
-		ret += color * lgt->getColor() * shade * pow(spec_ratio,spec_power) * obj.getMaterial().spec;
+		double shade = lgt->getShade(obj_coll.C,objects,shade_quality);
+		ret += color * lgt->getColor(lgt->getCenter()) * shade * obj.getMaterial().diff;
+		double spec_ratio = (lgt->getCenter() - obj_coll.C).unit() ^ obj_coll.N.unit();
+		if (spec_ratio > 0)
+			ret += color * lgt->getColor(lgt->getCenter()) * shade * pow(spec_ratio,spec_power) * obj.getMaterial().spec;
 	}
-	return ret;
+	return ret.adjust();
 }
 
 const Object* RayTracing::findCollidedObject(const Vector& _rayO,const Vector& _rayD) {
@@ -123,20 +124,21 @@ const Light* RayTracing::findCollidedLight(const Vector& _rayO, const Vector& _r
 }
 
 Color RayTracing::rayTrace(const Vector& rayO, const Vector& rayD, int depth, unsigned& hash) {
-	LOG(INFO)<<"Ray Trace... <d="<<depth<<",h="<<hash<<">"<<std::endl;
+	DLOG(INFO)<<"Ray Trace... <d="<<depth<<",h="<<hash<<">"<<std::endl;
 	const Object* obj = findCollidedObject(rayO,rayD);
 	const Light* lgt = findCollidedLight(rayO,rayD);
 	if (!obj && !lgt) {
 		return *bg_color;
 	}else if (!obj || (obj && lgt && obj->getCollision().dist > lgt->getCollision().dist)) {
-		return lgt->getColor();
+		return lgt->getColor(lgt->getCenter());
 	}else {
+		Collision obj_coll = obj->getCollision();
 		Color ret;
 		if (obj->getMaterial().refl>feps)
-			ret += calcReflection(*obj,depth+1,hash);
+			ret += calcReflection(*obj,obj_coll,depth+1,hash);
 		if (obj->getMaterial().diff>feps || obj->getMaterial().spec>feps)
-			ret += calcDiffusion(*obj);
-		return ret;
+			ret += calcDiffusion(*obj,obj_coll);
+		return ret.adjust();
 	}
 }
 
@@ -147,8 +149,8 @@ void RayTracing::run() {
 			LOG(INFO)<<"RENDER POSITION <"<<i<<","<<j<<">"<<std::endl;
 			Vector rayO,rayD;
 			camera->getRay(i,j,rayO,rayD);
-			LOG(INFO)<<"RayO = "<<rayO.description()<<std::endl;
-			LOG(INFO)<<"RayD = "<<rayD.description()<<std::endl;
+			DLOG(INFO)<<"RayO = "<<rayO.description()<<std::endl;
+			DLOG(INFO)<<"RayD = "<<rayD.description()<<std::endl;
 			unsigned hash = 0;
 			Color cc = rayTrace(rayO,rayD,0,hash);
 			board[i*camera->getRy()+j] = new Color(cc);

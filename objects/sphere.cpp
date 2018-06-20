@@ -14,14 +14,11 @@ void Sphere::accept(const Json::Value& val) {
 	color.accept(val["color"]);
 }
 
-const Color& Sphere::getColor()const {
-	return color;
+Color Sphere::getColor(const Vector&)const {
+	if (texture->getType() != TEXTURE_PURE_COLOR)
+		DLOG(FATAL)<<"The getColor of Sphere only support PURE_COLOR_MODE"<<std::endl;
+	return texture->getColor();
 }
-
-/*
- * ( Cir_O - (Ray_O + k*Ray_D) ).sqrlen() = r*r
- *
- */
 
 bool Sphere::collideWith(const Vector& rayO,const Vector& rayD) {
 	assert(rayD.isUnit());
@@ -39,8 +36,8 @@ bool Sphere::collideWith(const Vector& rayO,const Vector& rayD) {
 		collision.N = (collision.C - O).unit();
 		Vector NN = collision.N * (collision.N ^ rayD.reverse());
 		collision.D = 2*NN - rayD.reverse();
-		LOG(INFO)<<"Sphere <"<<name<<"> : hitted."<<std::endl;
-		LOG(INFO)<<collision.description()<<std::endl;
+		DLOG(INFO)<<"Sphere <"<<name<<"> : hitted."<<std::endl;
+		DLOG(INFO)<<collision.description()<<std::endl;
 		return true;
 	}else {
 		return false;
