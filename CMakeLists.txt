@@ -26,16 +26,26 @@ target_link_libraries(main ${OpenCV_LIBS})
 target_link_libraries(main jsoncpp)
 target_link_libraries(main glog)
 
+add_executable(serial serial.cpp)
+target_link_libraries(serial Core_LIBS)
+target_link_libraries(serial Display_LIBS)
+target_link_libraries(serial Render_LIBS)
+target_link_libraries(serial Objects_LIBS)
+target_link_libraries(serial ${OpenCV_LIBS})
+target_link_libraries(serial jsoncpp)
+target_link_libraries(serial glog)
 
-add_executable(unittest unittest.cpp)
-target_link_libraries(unittest gtest gmock_main Core_LIBS)
-target_link_libraries(unittest jsoncpp)
-target_link_libraries(unittest glog)
+#add_executable(unittest unittest.cpp)
+#target_link_libraries(unittest gtest gmock_main Core_LIBS)
+#target_link_libraries(unittest jsoncpp)
+#target_link_libraries(unittest glog)
 
 
 add_custom_command(TARGET main
 	POST_BUILD
 	COMMAND ${CMAKE_COMMAND} -E create_symlink ${DRAW_POLYGON_SOURCE_DIR}/configures configures
 	COMMENT "Copy the configures into directory..."
+	COMMAND ${CMAKE_COMMAND} -E create_symlink ${DRAW_POLYGON_SOURCE_DIR}/materials materials
+	COMMENT "Copy the materials into directory..."
 	)
 

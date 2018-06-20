@@ -7,13 +7,6 @@ Light::Light() : Object() {
 Light::~Light() {
 }
 
-void AreaLight :: accept(const Json::Value& val) {
-	position.accept(val["position"]);
-	dx.accept(val["dx"]);
-	dy.accept(val["dy"]);
-	color.accept(val["color"]);
-	LOG(INFO)<<"AreaLight : Data accepted."<<std::endl;
-}
-
-void AreaLight :: collideWith(const Ray& ray) {
+void Light::accept(const Json::Value& val) {
+	Object::accept(val);
 }

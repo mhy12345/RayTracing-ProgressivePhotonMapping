@@ -1,18 +1,16 @@
-#ifndef SPHERE_H
-#define SPHERE_H
+#ifndef PLANE_H
+#define PLANE_H
 
-#include "../core/vector.h"
 #include "../core/object.h"
 
-class Sphere : public Object {
+class Plane : public Object {
 	private:
 		Vector O;
-		double radius;
+		Vector dx,dy;
 		Color color;
 	public:
-		Sphere();
+		Plane();
 		virtual void accept(const Json::Value& val);
-		const Color& getColor()const;
 		bool collideWith(const Vector& rayO,const Vector& rayD);
 };
 

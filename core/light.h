@@ -3,27 +3,17 @@
 
 #include "vector.h"
 #include "color.h"
+#include "object.h"
 
-class Light : Object {
+class Light : public Object {
 	protected:
-		Color color;
 	public:
 		Light();
 		virtual ~Light();
-		virtual void accept(const Json::Value& val) = 0;
-		const Color& getColor() {
-			return color;
-		}
+		virtual void accept(const Json::Value& val);
+		virtual Vector getCenter()const = 0;
+		virtual double getShade(const Vector& rayO,std::vector<Object*> olist,int shade_quality)const = 0;
 };
 
-class AreaLight : public Light {
-	private:
-		Vector position;
-		Vector dx,dy;
-	public:
-		AreaLight(){}
-		void accept(const Json::Value& val);
-		bool collideWith(const Ray& ray);
-};
 
 #endif

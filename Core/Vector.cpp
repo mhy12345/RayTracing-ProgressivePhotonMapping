@@ -1,5 +1,7 @@
 #include "vector.h"
 #include <cmath>
+#include "glog/logging.h"
+#include <sstream>
 
 Vector :: Vector() {
 	x = 0 , y = 0, z = 0;
@@ -10,6 +12,8 @@ Vector :: Vector(double x,double y,double z) : x(x), y(y), z(z){
 }
 
 void Vector :: accept(const Json::Value& val) {
+	if (!val.isMember("x") || !val.isMember("y") || !val.isMember("z"))
+		LOG(ERROR)<<"The vector not found..."<<std::endl;
 	x = val["x"].asDouble();
 	y = val["y"].asDouble();
 	z = val["z"].asDouble();
@@ -29,6 +33,9 @@ Vector operator +(const Vector &a,const Vector &b) {
 
 Vector operator -(const Vector &a,const Vector &b) {
 	return Vector(a.x-b.x,a.y-b.y,a.z-b.z);
+}
+Vector operator -(const Vector &a) {
+	return Vector(-a.x,-a.y,-a.z);
 }
 
 Vector operator *(double k,const Vector &a) {
@@ -59,4 +66,15 @@ Vector Vector::unit()const {
 }
 Vector Vector::reverse()const {
 	return Vector(-x,-y,-z);
+}
+bool Vector::isUnit()const {
+	return abs(x*x+y*y+z*z - 1) < feps;
+}
+
+std::string Vector::description()const {
+	std::stringstream ss;
+	std::string res;
+	ss<<"Vector<"<<x<<","<<y<<","<<z<<">";
+	ss>>res;
+	return res;
 }

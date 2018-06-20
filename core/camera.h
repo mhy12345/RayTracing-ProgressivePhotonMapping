@@ -1,7 +1,6 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 #include "vector.h"
-#include "ray.h"
 
 class Camera {
 	private:
@@ -15,7 +14,7 @@ class Camera {
 		void accept(const Json::Value& val);
 		int getRx()const {return rx;}
 		int getRy()const {return ry;}
-		Ray getRay(double scanX, double scanY);
+		void getRay(double scanX, double scanY, Vector &rayO, Vector &rayD);
 };
 
 #endif

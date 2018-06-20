@@ -1,26 +1,95 @@
 {
-	"camera": {
+	"camera": 
+	{
 		"type":"default",
-		"position" : {"x":-10,"y":-10,"z":0 },
+		"position" : {"x":-10,"y":-20,"z":0 },
 		"dx" : {"x":20,"y":0,"z":0},
-		"dy" : {"x":0,"y":20,"z":0},
-		"origin" : {"x":0,"y":0,"z":-100},
-		"rx" : 1024,
-		"ry" : 512
+		"dy" : {"x":0,"y":40,"z":0},
+		"origin" : {"x":0,"y":0,"z":-20},
+		"rx" : 512,
+		"ry" : 1024,
+		"_rx" : 120,
+		"_ry" : 240,
+		"_rx" : 5,
+		"_ry" : 5
 	},
-	"lights" : [ {
-		"type":"area_light",
-		"position":{"x":10,"y":10,"z":100},
-		"dx" : {"x":10,"y":0,"z":0},
-		"dy" : {"x":0,"y":10,"z":0},
-		"color": {"r":1,"g":1,"b":1}
-	}
+	"lights" : [ 
+		{
+			"type":"area_light",
+			"name":"light1",
+			"position":{"x":14.9,"y":-10,"z":10},
+			"dx" : {"x":0,"y":0,"z":20},
+			"dy" : {"x":0,"y":20,"z":0},
+			"color": {"r":1,"g":1,"b":1},
+			"material":{"refl":0,"diff":0,"spec":0}
+		}
 	],
-	"objects" : [ {
-		"type":"sphere",
-		"center":{"x":5,"y":5,"z":5},
-		"radius":2
-	}
+	"objects" : [ 
+		{
+			"type":"sphere",
+			"name":"ball",
+			"center":{"x":0,"y":0,"z":20},
+			"radius":10,
+			"material":{"refl":0.5,"diff":0.1,"spec":0.4},
+			"color": {"r":1,"g":0,"b":1}
+		}, 
+		{
+			"type":"plane",
+			"name":"wall-forward",
+			"position":{"x":-15,"y":-30,"z":40},
+			"dx":{"x":30,"y":0,"z":0},
+			"dy":{"x":0,"y":60,"z":0},
+			"color":{"r":0,"g":1,"b":1},
+			"material":{"refl":0,"diff":1.0,"spec":0}
+		},
+		{
+			"type":"plane",
+			"name":"wall-backward",
+			"position":{"x":-15,"y":-30,"z":-40},
+			"dx":{"x":30,"y":0,"z":0},
+			"dy":{"x":0,"y":60,"z":0},
+			"color":{"r":1,"g":0,"b":0},
+			"material":{"refl":0,"diff":1.0,"spec":0}
+		},
+		{
+			"type":"plane",
+			"name":"wall-left",
+			"position":{"x":-15,"y":-30,"z":-20},
+			"dx":{"x":0,"y":0,"z":80},
+			"dy":{"x":30,"y":0,"z":0},
+			"color":{"r":1,"g":0,"b":1},
+			"material":{"refl":0.4,"diff":0.5,"spec":0.1}
+		},
+		{
+			"type":"plane",
+			"name":"wall-right",
+			"position":{"x":-15,"y":30,"z":-20},
+			"dx":{"x":0,"y":0,"z":80},
+			"dy":{"x":30,"y":0,"z":0},
+			"color":{"r":0,"g":0,"b":1},
+			"material":{"refl":0.4,"diff":0.5,"spec":0.1}
+		},
+		{
+			"type":"plane",
+			"name":"wall-top",
+			"position":{"x":15,"y":-30,"z":-20},
+			"dx":{"x":0,"y":0,"z":80},
+			"dy":{"x":0,"y":60,"z":0},
+			"color":{"r":1,"g":1,"b":0},
+			"material":{"refl":0,"diff":1.0,"spec":0}
+		},
+		{
+			"type":"plane",
+			"name":"wall-bottom",
+			"position":{"x":-15,"y":-30,"z":-20},
+			"dx":{"x":0,"y":0,"z":80},
+			"dy":{"x":0,"y":60,"z":0},
+			"color":{"r":1,"g":1,"b":0},
+			"material":{"refl":0,"diff":1.0,"spec":0}
+		}
 	],
-	"bg_color" : {"r":0.5,"g":0.5,"b":0.5}
+	"bg_color" : {"r":0.5,"g":0.5,"b":0.5},
+	"shade_quality" : 5,
+	"spec_power": 20,
+	"max_depth" : 5
 }

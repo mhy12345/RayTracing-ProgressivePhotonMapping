@@ -7,15 +7,22 @@ Camera::~Camera() {
 }
 
 void Camera :: accept(const Json::Value& val) {
+	LOG(INFO)<<"Camera : Init position"<<std::endl;
 	position.accept(val["position"]);
+	LOG(INFO)<<"Camera : Init dx/dy"<<std::endl;
 	dx.accept(val["dx"]);
 	dy.accept(val["dy"]);
+	LOG(INFO)<<"Camera : Init rx/ry"<<std::endl;
 	rx = val["rx"].asInt();
 	ry = val["ry"].asInt();
+	LOG(INFO)<<"Camera : Init origin"<<std::endl;
 	origin.accept(val["origin"]);
 	LOG(INFO)<<"Camera : Data accpeted."<<std::endl;
+	LOG(INFO)<<"Camera : rx/ry = "<<rx<<" "<<ry<<std::endl;
+	assert(rx>1 && ry>1);
 }
 
-Ray Camera::getRay(double scanX,double scanY) {
-	return Ray(origin,position + scanX *dx + scanY*dy);
+void Camera::getRay(double scanX,double scanY, Vector& rayO, Vector& rayD) {
+	rayO = origin;
+	rayD = ((position + scanX*dx/(rx-1) + scanY*dy/(ry-1))-origin).unit();
 }

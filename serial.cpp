@@ -9,14 +9,6 @@
 
 bool show_graph_flag = true;
 
-void* show_graph(void* params) {
-	RayTracing *RT = (RayTracing*)params;
-	RT->run();	
-	show_graph_flag = false;
-	return NULL;
-}
-
-
 int main(int argc, char** args)
 {
 	google::InitGoogleLogging(args[0]);
@@ -34,15 +26,8 @@ int main(int argc, char** args)
 	RT.accept(root);
 	RT.registerPaintBoard(&PB);
 
-	pthread_t watcher;
-	pthread_create(&watcher,NULL,show_graph,&RT);
 
-	while (show_graph_flag) {
-		PB.update();
-		usleep(10000000);
-	}
-
-	show_graph_flag = false;
-	pthread_join(watcher,NULL);
+	RT.run();
+	PB.update();
 	cv::waitKey(0);
 }
