@@ -9,11 +9,12 @@ using namespace std;
 class PaintBoard {
 	private:
 		cv::Mat *image;
-		Color ***board;
+		Color **board;
 		int sizX,sizY;
 	public:
 		PaintBoard();
-		void init(int sizX,int sizY,Color*** _board);
+		~PaintBoard();
+		void init(int sizX,int sizY,Color** _board);
 		void update();
 		void display();
 		void save();

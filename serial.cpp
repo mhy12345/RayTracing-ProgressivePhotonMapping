@@ -27,6 +27,9 @@ int main(int argc, char** args)
 	RT.registerPaintBoard(&PB);
 
 	RT.run();
+	std::cout<<"HAHA"<<std::endl;
 	PB.update();
+	PB.display();
+	std::cout<<"HAHA"<<std::endl;
 	cv::waitKey(0);
 }

@@ -14,8 +14,9 @@ class RayTracing{
 		Camera *camera;
 		std::vector<Light*> lights;
 		std::vector<Object*> objects;
-		Color *bg_color;
-		Color **board;
+		Color bg_color;
+		Color *board;
+		unsigned **hash_table;
 		PaintBoard* paint_board;
 		int max_depth;
 		int shade_quality;
