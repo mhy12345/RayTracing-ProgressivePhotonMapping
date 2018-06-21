@@ -22,10 +22,13 @@ Color Plane::getColor(const Vector& pos)const {
 		double ty = ((pos - O)^dy)/dy.len();
 		return texture->getColor(tx,ty);
 	}else
-	DLOG(FATAL)<<"The getColor of Plane only support PURE_COLOR_MODE"<<std::endl;
+	{
+		DLOG(FATAL)<<"The getColor of Plane only support PURE_COLOR_MODE"<<std::endl;
+		return Color();
+	}
 }
 
-bool Plane::collideWith(const Vector& rayO,const Vector& rayD) {
+bool Plane::collideWith(const Vector& rayO,const Vector& rayD,Collision& collision) {
 	assert(rayD.isUnit());
 	DLOG(INFO)<<"Calc Collision : "<<rayO.description()<<" "<<rayD.description()<<std::endl;
 	Vector N = (dx*dy).unit();

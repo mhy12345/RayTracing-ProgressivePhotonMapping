@@ -6,10 +6,8 @@ using namespace cv;
 PaintBoard::PaintBoard() {
 	sizX = -1,sizY = -1;
 	image = NULL;
-	board = new Color*;
 }
 PaintBoard::~PaintBoard() {
-	delete board;
 }
 
 void PaintBoard::init(int sizX,int sizY,Color** _board) {

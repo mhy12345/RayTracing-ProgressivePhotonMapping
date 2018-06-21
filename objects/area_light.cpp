@@ -12,7 +12,7 @@ void AreaLight :: accept(const Json::Value& val) {
 	DLOG(INFO)<<"AreaLight : Data accepted."<<std::endl;
 }
 
-bool AreaLight :: collideWith(const Vector& rayO, const Vector& rayD) {
+bool AreaLight :: collideWith(const Vector& rayO, const Vector& rayD,Collision& collision) {
 	assert(rayD.isUnit());
 	DLOG(INFO)<<"Area Light : "<<rayO.description()<<" "<<rayD.description()<<std::endl;
 	Vector N = (dx*dy).unit();
@@ -51,9 +51,10 @@ double AreaLight::getShade(const Vector& _rayO,std::vector<Object*> olist, int s
 				for (auto &w: olist)
 				{
 					bool flg;
-					if ((flg = w->collideWith(checkO,checkD)) && w->getCollision().dist < dist) {
+					Collision obj_coll;
+					if ((flg = w->collideWith(checkO,checkD,obj_coll)) && obj_coll.dist < dist) {
 						flag = false;
-						DLOG(INFO)<<"SHADED INFO : "<<flg<<" "<<w->getCollision().dist<<" "<<dist<<std::endl;
+						DLOG(INFO)<<"SHADED INFO : "<<flg<<" "<<obj_coll.dist<<" "<<dist<<std::endl;
 						break;
 					}
 				}

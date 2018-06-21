@@ -39,6 +39,7 @@ int main(int argc, char** args)
 
 	while (show_graph_flag) {
 		PB.update();
+		PB.save();
 		PB.display();
 		//usleep(10000000);
 	}

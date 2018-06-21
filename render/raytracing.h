@@ -28,8 +28,8 @@ class RayTracing{
 		Color calcReflection(const Object& obj, const Collision& obj_coll, int depth, unsigned& hash);
 		Color calcDiffusion(const Object& obj, const Collision& obj_coll);
 
-		const Object* findCollidedObject(const Vector &rayO,const Vector& rayD);
-		const Light* findCollidedLight(const Vector& rayO,const Vector& rayD);
+		const Object* findCollidedObject(const Vector &rayO,const Vector& rayD,Collision& coll);
+		const Light* findCollidedLight(const Vector& rayO,const Vector& rayD, Collision& coll);
 		Color rayTrace(const Vector& rayO, const Vector& rayD, int depth, unsigned& hash);
 		void run();
 		void registerPaintBoard(PaintBoard* pb) ;

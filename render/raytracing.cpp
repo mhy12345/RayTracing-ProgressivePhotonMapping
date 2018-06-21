@@ -7,9 +7,15 @@
 #include "glog/logging.h"
 #include <iostream>
 
+#ifdef USE_OPENMP
+#include <omp.h>
+#pragma message("The openmp is enable!")
+#endif
+
 RayTracing::RayTracing() {
 	camera = NULL;
 }
+
 RayTracing::~RayTracing() {
 	if (camera)
 		delete camera;
@@ -93,31 +99,33 @@ Color RayTracing::calcDiffusion(const Object& obj, const Collision& obj_coll) {
 	return ret.adjust();
 }
 
-const Object* RayTracing::findCollidedObject(const Vector& _rayO,const Vector& _rayD) {
+const Object* RayTracing::findCollidedObject(const Vector& _rayO,const Vector& _rayD,Collision& resColl) {
 	Vector rayO = _rayO;
 	Vector rayD = _rayD;
 	Object* ret = NULL;
-	double cdist = inf;
+	resColl.dist = inf;
 	for (auto obj : objects) {
-		if (obj->collideWith(rayO,rayD)) {
-			if (obj->getCollision().dist < cdist) {
-				cdist = obj->getCollision().dist;
+		Collision obj_coll;
+		if (obj->collideWith(rayO,rayD,obj_coll)) {
+			if (obj_coll.dist < resColl.dist) {
 				ret = obj;
+				resColl = obj_coll;
 			}
 		}
 	}
 	return ret;
 }
 
-const Light* RayTracing::findCollidedLight(const Vector& _rayO, const Vector& _rayD) {
+const Light* RayTracing::findCollidedLight(const Vector& _rayO, const Vector& _rayD,Collision& resColl) {
 	Vector rayO = _rayO;
 	Vector rayD = _rayD;
 	Light* ret = NULL;
-	double cdist = inf;
+	resColl.dist = inf;
 	for (auto &lgt : lights) {
-		if (lgt->collideWith(rayO,rayD)) {
-			if (lgt->getCollision().dist < cdist) {
-				cdist = lgt->getCollision().dist;
+		Collision lgt_coll;
+		if (lgt->collideWith(rayO,rayD,lgt_coll)) {
+			if (lgt_coll.dist < resColl.dist) {
+				resColl = lgt_coll;
 				ret = lgt;
 			}
 		}
@@ -127,16 +135,16 @@ const Light* RayTracing::findCollidedLight(const Vector& _rayO, const Vector& _r
 
 Color RayTracing::rayTrace(const Vector& rayO, const Vector& rayD, int depth, unsigned& hash) {
 	DLOG(INFO)<<"Ray Trace... <d="<<depth<<",h="<<hash<<">"<<std::endl;
-	const Object* obj = findCollidedObject(rayO,rayD);
-	const Light* lgt = findCollidedLight(rayO,rayD);
+	Collision obj_coll,lgt_coll;
+	const Object* obj = findCollidedObject(rayO,rayD,obj_coll);
+	const Light* lgt = findCollidedLight(rayO,rayD,lgt_coll);
 	if (!obj && !lgt) {
 		hash = hash * 17 + 235;
 		return bg_color;
-	}else if (!obj || (obj && lgt && obj->getCollision().dist > lgt->getCollision().dist)) {
+	}else if (!obj || (obj && lgt && obj_coll.dist > lgt_coll.dist)) {
 		hash = hash * 17 + lgt->getHash();
 		return lgt->getColor(lgt->getCenter());
 	}else {
-		Collision obj_coll = obj->getCollision();
 		Color ret;
 		if (obj->getMaterial().refl>feps)
 			ret += calcReflection(*obj,obj_coll,depth+1,hash);
@@ -151,8 +159,12 @@ void RayTracing::run() {
 	hash_table = new unsigned*[camera->getRx()];
 	for (int i=0;i<camera->getRx();i++)
 		hash_table[i] = new unsigned[camera->getRy()];
-
+#pragma omp parallel
+#pragma omp for schedule(dynamic,5)
 	for (int i=0;i<camera->getRx();i++){
+#ifdef USE_OPENMP
+		std::cout<<omp_get_num_threads()<<std::endl;
+#endif
 		printf("Render row #%d\n",i);
 		for (int j=0;j<camera->getRy();j++) {
 			LOG(INFO)<<"RENDER POSITION <"<<i<<","<<j<<">"<<std::endl;
@@ -166,6 +178,7 @@ void RayTracing::run() {
 		}
 	}
 	LOG(INFO)<<"Resampling..."<<std::endl;
+#pragma omp for schedule(dynamic,5)
 	for (int i=0;i<camera->getRx();i++) {
 		for (int j=0;j<camera->getRy();j++) {
 			bool flag = false;

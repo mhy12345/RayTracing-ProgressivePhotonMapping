@@ -10,7 +10,7 @@ class AreaLight : public Light {
 	public:
 		AreaLight(){}
 		void accept(const Json::Value& val);
-		bool collideWith(const Vector& rayO, const Vector& rayD);
+		bool collideWith(const Vector& rayO, const Vector& rayD, Collision& collision);
 		Vector getCenter()const;
 		double getShade(const Vector& rayO,std::vector<Object*> olist,int shade_quality)const;
 };

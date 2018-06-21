@@ -20,7 +20,7 @@ Color Sphere::getColor(const Vector&)const {
 	return texture->getColor();
 }
 
-bool Sphere::collideWith(const Vector& rayO,const Vector& rayD) {
+bool Sphere::collideWith(const Vector& rayO,const Vector& rayD,Collision& collision) {
 	assert(rayD.isUnit());
 	Vector V = O-rayO;
 	double c = V.sqrlen()-radius*radius;
