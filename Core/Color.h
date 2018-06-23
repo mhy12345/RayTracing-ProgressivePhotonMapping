@@ -18,6 +18,7 @@ class Color
 		friend Color operator +(const Color& a,const Color &b);
 		friend Color operator *(const Color& a,double k);
 		friend Color operator *(const Color& a,const Color& b);
+		Color exp()const;
 		std::string description()const;
 		Color adjust()const;
 };

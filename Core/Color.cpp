@@ -2,6 +2,7 @@
 #include "glog/logging.h"
 #include <sstream>
 #include <algorithm>
+#include <cmath>
 #include "vector.h"
 using namespace std;
 
@@ -30,6 +31,10 @@ Color operator *(const Color& a,const Color &b) {
 
 Color operator *(const Color& a,double k) {
 	return Color(a.r*k,a.g*k,a.b*k);
+}
+
+Color Color::exp()const {
+	return Color(::exp(r),::exp(g),::exp(b));
 }
 
 Color Color::operator +=(const Color& a) {

@@ -85,23 +85,25 @@ Color RayTracing::calcReflection(const Object& obj, const Collision& obj_coll, i
 }
 
 Color RayTracing::calcRefraction(const Object& obj, const Collision& obj_coll, int depth, unsigned& hash) {
-	//LOG(INFO)<<"calcRefraction... <d="<<depth<<",h="<<hash<<">"<<std::endl;
-	Color color = obj.getColor(obj_coll.C);
+	LOG(INFO)<<"calcRefraction... <d="<<depth<<",h="<<hash<<">"<<std::endl;
 	if (depth > max_depth) {
 		hash = hash * 19 + 233;
 		return bg_color;
 	}
+	hash = hash * 19 + obj.getHash();
 	Vector rayD;
 	Vector rayO;
-   	obj_coll.refraction(rayO,rayD);
-	hash = hash * 19 + obj.getHash();
-	Color resColor = (color * rayTrace(rayO,rayD,depth,hash) * obj.getMaterial().refr).adjust();
-	/*
-	LOG(INFO)<<"	resO = "<<rayO.description()<<std::endl;
-	LOG(INFO)<<"	resD = "<<rayD.description()<<std::endl;
-	LOG(INFO)<<"	resColor = "<<resColor.description()<<std::endl;*/
-	return resColor;
-	//return (rayTrace(rayO,rayD,depth,hash) * obj.getMaterial().refr).adjust();
+	Color acol;
+	obj_coll.refraction(rayO,rayD);
+	Color rcol = rayTrace(rayO,rayD,depth,hash);
+	if (obj_coll.face)
+		rcol = rcol*obj.getMaterial().refr;
+	if (!obj_coll.face)
+		acol = (obj.getAbsorb().getColor(0,0)*-obj_coll.dist).exp();
+	else
+		acol = Color(1,1,1);
+
+	return (rcol*acol).adjust();
 }
 
 Color RayTracing::calcDiffusion(const Object& obj, const Collision& obj_coll) {
@@ -196,8 +198,8 @@ void RayTracing::run() {
 			LOG(INFO)<<"RENDER POSITION <"<<i<<","<<j<<">"<<std::endl;
 			Vector rayO,rayD;
 			camera->getRay(i,j,rayO,rayD);
-			DLOG(INFO)<<"RayO = "<<rayO.description()<<std::endl;
-			DLOG(INFO)<<"RayD = "<<rayD.description()<<std::endl;
+			DLOG(INFO)<<"	RayO = "<<rayO.description()<<std::endl;
+			DLOG(INFO)<<"	RayD = "<<rayD.description()<<std::endl;
 			Color cc = rayTrace(rayO,rayD,0,hash_table[i][j]);
 			board[i*camera->getRy()+j] = cc;
 			LOG(INFO)<<"Color = "<<cc.description()<<std::endl;

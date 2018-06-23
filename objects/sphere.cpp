@@ -13,10 +13,19 @@ void Sphere::accept(const Json::Value& val) {
 	radius = val["radius"].asDouble();
 }
 
-Color Sphere::getColor(const Vector&)const {
-	if (texture->getType() != TEXTURE_PURE_COLOR)
-		DLOG(FATAL)<<"The getColor of Sphere only support PURE_COLOR_MODE"<<std::endl;
-	return texture->getColor();
+Color Sphere::getColor(const Vector&v)const {
+	if (texture->getType() == TEXTURE_PURE_COLOR)
+	{
+		return texture->getColor();
+	}else if (texture->getType() == TEXTURE_PICTURE) {
+		Vector tmp = (v - O)/radius;
+		if (!tmp.isUnit())
+			LOG(FATAL)<<"The vector is not on the surface!"<<std::endl;
+		double x = asin(tmp.getZ());
+		double y = atan2(tmp.getX(),tmp.getY());
+		return texture->getColor(x,y);
+	}
+	assert(false);
 }
 
 bool Sphere::collideWith(const Vector& rayO,const Vector& rayD,Collision& collision) {
