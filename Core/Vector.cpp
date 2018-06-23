@@ -7,8 +7,10 @@ Vector :: Vector() {
 	x = 0 , y = 0, z = 0;
 }
 
-
 Vector :: Vector(double x,double y,double z) : x(x), y(y), z(z){
+}
+
+Vector :: Vector(const Eigen::Vector3d vec) : x(vec(0,0)),y(vec(1,0)),z(vec(2,0)) {
 }
 
 void Vector :: accept(const Json::Value& val) {
@@ -77,4 +79,7 @@ std::string Vector::description()const {
 	ss<<"Vector<"<<x<<","<<y<<","<<z<<">";
 	ss>>res;
 	return res;
+}
+Eigen::Vector3d Vector::eigen()const {
+	return Eigen::Vector3d(x,y,z);
 }

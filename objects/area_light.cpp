@@ -20,13 +20,15 @@ bool AreaLight :: collideWith(const Vector& rayO, const Vector& rayD,Collision& 
 	double t = -(d+(N^rayO))/(N^rayD);
 	if (!isfinite(t))return false;
 	if (t<feps)return false;
+	collision.belongs = this;
 	collision.dist = t;
 	collision.C = rayO + t*rayD;
+	collision.face = (rayD^N) < 0;
 	double r1 = ((collision.C - O)^dx)/dx.sqrlen();
 	double r2 = ((collision.C - O)^dy)/dy.sqrlen();
 	if (r1>1-feps || r2>1-feps || r1<feps || r2<feps)
 		return false;
-	collision.N = N;
+	collision.N = collision.face ? N : -N;
 	collision.D = N*(rayD.reverse()^N)*2-rayD.reverse();
 	DLOG(INFO)<<"Area Light <"<<name<<">: hitted"<<std::endl;
 	return true;
@@ -54,17 +56,11 @@ double AreaLight::getShade(const Vector& _rayO,std::vector<Object*> olist, int s
 					Collision obj_coll;
 					if ((flg = w->collideWith(checkO,checkD,obj_coll)) && obj_coll.dist < dist) {
 						flag = false;
-						DLOG(INFO)<<"SHADED INFO : "<<flg<<" "<<obj_coll.dist<<" "<<dist<<std::endl;
 						break;
 					}
 				}
 				if (flag)
-				{
 					success_count ++;
-					DLOG(INFO)<<"The area was not shaded... +1"<<std::endl;
-				}
-				else
-					DLOG(INFO)<<"The area was shaded... +0"<<std::endl;
 			}
 		}
 	}

@@ -2,7 +2,9 @@
 #include "glog/logging.h"
 #include <sstream>
 #include <algorithm>
+#include "vector.h"
 using namespace std;
+
 
 Color::Color() {
 	r = g = b = 0;
@@ -12,6 +14,8 @@ Color::Color(double r,double g,double b) : r(r),g(g),b(b) {
 }
 
 Color Color::adjust()const {
+	if (r>1+feps || g>1+feps || b>1+feps)
+		LOG(INFO)<<"Color adjust from "<<description()<<std::endl;
 	return Color(min(r,1.0),min(g,1.0),min(b,1.0));
 }
 
@@ -23,7 +27,6 @@ Color operator +(const Color& a,const Color &b) {
 Color operator *(const Color& a,const Color &b) {
 	return Color(a.r*b.r,a.g*b.g,a.b*b.b);
 }
-
 
 Color operator *(const Color& a,double k) {
 	return Color(a.r*k,a.g*k,a.b*k);

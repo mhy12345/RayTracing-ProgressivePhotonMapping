@@ -2,6 +2,7 @@
 #define VECTOR_H
 #include "json/json.h"
 #include <string>
+#include <Eigen/Dense>
 
 #define INF 0x3f3f3f3f
 #define inf 1e100
@@ -13,6 +14,7 @@ class Vector
 	public:
 		Vector();
 		Vector(double x,double y,double z);
+		Vector(const Eigen::Vector3d vec);
 		double getX() const {return x;}
 		double getY() const {return y;}
 		double getZ() const {return z;}
@@ -32,5 +34,6 @@ class Vector
 		double sqrlen()const;
 		bool isUnit()const;
 		std::string description()const;
+		Eigen::Vector3d eigen()const;
 };
 #endif

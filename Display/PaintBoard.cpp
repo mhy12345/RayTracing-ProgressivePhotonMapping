@@ -21,8 +21,8 @@ void PaintBoard::update() {
 	assert(image);
 	for (int i=0;i<sizX;i++) {
 		for (int j=0;j<sizY;j++) {
-			Color& c = (*board)[(sizX-i-1)*sizY+j];
-//std::cout<<c.description()<<std::endl;
+			//Color& c = (*board)[(sizX-i-1)*sizY+j];
+			Color& c = (*board)[i*sizY+j];
 			Vec3f v(c.getR(),c.getG(),c.getB());
 			image->at<Vec3d>(i,j) = v;
 		}

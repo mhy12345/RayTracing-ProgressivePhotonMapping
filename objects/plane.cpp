@@ -6,6 +6,8 @@
 
 Plane::Plane() {
 }
+Plane::Plane(Vector O,Vector dx,Vector dy):O(O),dx(dx),dy(dy) {
+}
 
 void Plane::accept(const Json::Value& val) {
 	Object::accept(val);
@@ -35,19 +37,20 @@ bool Plane::collideWith(const Vector& rayO,const Vector& rayD,Collision& collisi
 	double d = -(N^O);
 	double t = -(d+(N^rayO))/(N^rayD);
 	if (!isfinite(t))return false;
-	if (t < feps) {
-		if (abs(t) < feps) {
-			DLOG(WARNING)<<"Plane <"<<name<<">: border ignored"<<std::endl;
-		}
+	if (t < 0) {
+		DLOG(WARNING)<<"Plane <"<<name<<">: negative collision. ("<<t<<")"<<std::endl;
 		return false;
 	}
+	collision.belongs = this;
 	collision.dist = t;
 	collision.C = rayO + t*rayD;
-	collision.face = (rayD^N) < 0;
+	collision.face = (rayD^N) < 0;//True : front face, the ray hit toward to plane
 	double r1 = ((collision.C - O)^dx)/dx.sqrlen();
 	double r2 = ((collision.C - O)^dy)/dy.sqrlen();
-	if (r1>1-feps || r2>1-feps || r1<feps || r2<feps)
+	if (r1>1-feps || r2>1-feps || r1<feps || r2<feps) {
+		DLOG(WARNING)<<"Plane <"<<name<<">: no intersection ("<<r1<<" "<<r2<<")"<<std::endl;
 		return false;
+	}
 	collision.N = collision.face ? N : -N;
 	collision.D = N*(rayD.reverse()^N)*2-rayD.reverse();
 	DLOG(INFO)<<"Plane <"<<name<<">: hitted"<<std::endl;

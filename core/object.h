@@ -5,6 +5,7 @@
 #include "color.h"
 #include "vector.h"
 #include "texture.h"
+class Object;
 
 struct Collision {
 	Vector C;//The Center of Collision
@@ -12,13 +13,19 @@ struct Collision {
 	Vector D;//The direction of reflaction
 	double dist;
 	bool face;
+	Object* belongs;
 	std::string description()const;
+	void refraction(Vector& resO, Vector& resD)const;
+	Vector getSurfaceC()const;
+	Vector getBackfaceC()const;
 };
 
 struct Material {
 	double refl;//reflection ratio
 	double diff;//diffusion ratio
-	double spec;
+	double spec;//high light diffusion
+	double refr;//refraction ratio
+	double refr_k;
 	void accept(const Json::Value& val);
 };
 

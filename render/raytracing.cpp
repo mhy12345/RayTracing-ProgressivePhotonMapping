@@ -65,6 +65,7 @@ void RayTracing::accept(const Json::Value& val) {
 	max_depth = val["max_depth"].asInt();
 	shade_quality = val["shade_quality"].asInt();
 	spec_power = val["spec_power"].asInt();
+	start_rows = val["start_rows"].asInt();
 	DLOG(INFO)<<"RayTracing : Data accepted"<<std::endl;
 	board = new Color[camera->getRx()*camera->getRy()];
 	for (int i=0;i<camera->getRx()*camera->getRy();i++)
@@ -73,24 +74,43 @@ void RayTracing::accept(const Json::Value& val) {
 
 
 Color RayTracing::calcReflection(const Object& obj, const Collision& obj_coll, int depth, unsigned&hash) {
-	DLOG(INFO)<<"calcReflection... <d="<<depth<<",h="<<hash<<">"<<std::endl;
+	//LOG(INFO)<<"calcReflection... <d="<<depth<<",h="<<hash<<">"<<std::endl;
 	DLOG(INFO)<<"REFLECTION POSITION : "<<obj_coll.description()<<std::endl;
 	if (depth > max_depth) {
 		hash = hash * 17 + 233;
 		return bg_color;
 	}
-	Color result = (rayTrace(obj_coll.C,obj_coll.D,depth,hash) * obj.getMaterial().refl).adjust();
 	hash = hash * 17 + obj.getHash();
-	return result;
+	return (rayTrace(obj_coll.getSurfaceC(),obj_coll.D,depth,hash) * obj.getMaterial().refl).adjust();
+}
+
+Color RayTracing::calcRefraction(const Object& obj, const Collision& obj_coll, int depth, unsigned& hash) {
+	//LOG(INFO)<<"calcRefraction... <d="<<depth<<",h="<<hash<<">"<<std::endl;
+	Color color = obj.getColor(obj_coll.C);
+	if (depth > max_depth) {
+		hash = hash * 19 + 233;
+		return bg_color;
+	}
+	Vector rayD;
+	Vector rayO;
+   	obj_coll.refraction(rayO,rayD);
+	hash = hash * 19 + obj.getHash();
+	Color resColor = (color * rayTrace(rayO,rayD,depth,hash) * obj.getMaterial().refr).adjust();
+	/*
+	LOG(INFO)<<"	resO = "<<rayO.description()<<std::endl;
+	LOG(INFO)<<"	resD = "<<rayD.description()<<std::endl;
+	LOG(INFO)<<"	resColor = "<<resColor.description()<<std::endl;*/
+	return resColor;
+	//return (rayTrace(rayO,rayD,depth,hash) * obj.getMaterial().refr).adjust();
 }
 
 Color RayTracing::calcDiffusion(const Object& obj, const Collision& obj_coll) {
-	DLOG(INFO)<<"calcDiffusion..."<<std::endl;
+	//LOG(INFO)<<"calcDiffusion..."<<std::endl;
 	Color color = obj.getColor(obj_coll.C);
 	DLOG(INFO)<<"DIFFUSION POSITION : "<<obj_coll.description()<<std::endl;
-	Color ret = color * bg_color;
+	Color ret = color * bg_color *(1-obj.getMaterial().diff-obj.getMaterial().spec);
 	for (auto &lgt : lights) {
-		double shade = lgt->getShade(obj_coll.C,objects,shade_quality);
+		double shade = lgt->getShade(obj_coll.getSurfaceC(),objects,shade_quality);
 		ret += color * lgt->getColor(lgt->getCenter()) * shade * obj.getMaterial().diff;
 		double spec_ratio = (lgt->getCenter() - obj_coll.C).unit() ^ obj_coll.N.unit();
 		if (spec_ratio > 0)
@@ -134,7 +154,7 @@ const Light* RayTracing::findCollidedLight(const Vector& _rayO, const Vector& _r
 }
 
 Color RayTracing::rayTrace(const Vector& rayO, const Vector& rayD, int depth, unsigned& hash) {
-	DLOG(INFO)<<"Ray Trace... <d="<<depth<<",h="<<hash<<">"<<std::endl;
+	//LOG(INFO)<<"Ray Trace... <d="<<depth<<",h="<<hash<<">"<<std::endl;
 	Collision obj_coll,lgt_coll;
 	const Object* obj = findCollidedObject(rayO,rayD,obj_coll);
 	const Light* lgt = findCollidedLight(rayO,rayD,lgt_coll);
@@ -150,6 +170,8 @@ Color RayTracing::rayTrace(const Vector& rayO, const Vector& rayD, int depth, un
 			ret += calcReflection(*obj,obj_coll,depth+1,hash);
 		if (obj->getMaterial().diff>feps || obj->getMaterial().spec>feps)
 			ret += calcDiffusion(*obj,obj_coll);
+		if (obj->getMaterial().refr>feps)
+			ret += calcRefraction(*obj,obj_coll,depth+1,hash);
 		return ret.adjust();
 	}
 }
@@ -159,11 +181,15 @@ void RayTracing::run() {
 	hash_table = new unsigned*[camera->getRx()];
 	for (int i=0;i<camera->getRx();i++)
 		hash_table[i] = new unsigned[camera->getRy()];
+#ifdef USE_OPENMP
 #pragma omp parallel
 #pragma omp for schedule(dynamic,5)
-	for (int i=0;i<camera->getRx();i++){
+#endif
+	for (int _i=start_rows;_i<camera->getRx();_i++){
+		int i = _i;
 #ifdef USE_OPENMP
-		std::cout<<omp_get_num_threads()<<std::endl;
+		if (!i)
+			std::cout<<omp_get_num_threads()<<std::endl;
 #endif
 		printf("Render row #%d\n",i);
 		for (int j=0;j<camera->getRy();j++) {
@@ -178,7 +204,9 @@ void RayTracing::run() {
 		}
 	}
 	LOG(INFO)<<"Resampling..."<<std::endl;
+#ifdef USE_OPENMP
 #pragma omp for schedule(dynamic,5)
+#endif
 	for (int i=0;i<camera->getRx();i++) {
 		for (int j=0;j<camera->getRy();j++) {
 			bool flag = false;
