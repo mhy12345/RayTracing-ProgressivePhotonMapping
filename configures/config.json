@@ -1,99 +1,83 @@
 {
+	"_rx" : 512,
+	"_ry" : 1024,
+	"rx" : 120,
+	"ry" : 240,
+	"_rx" : 5,
+	"_ry" : 10,
 	"camera": 
 	{
 		"type":"default",
-		"position" : {"x":-10,"y":-20,"z":0 },
-		"dx" : {"x":20,"y":0,"z":0},
-		"dy" : {"x":0,"y":40,"z":0},
-		"origin" : {"x":0,"y":0,"z":-20},
-		"rx" : 512,
-		"ry" : 1024,
-		"_rx" : 120,
-		"_ry" : 240,
-		"_rx" : 5,
-		"_ry" : 10
+		"position" : {"x":20,"y":-10,"z":0 },
+		"dx" : {"x":-10,"y":0,"z":0},
+		"dy" : {"x":0,"y":20,"z":0},
+		"origin" : {"x":40,"y":0,"z":-50}
 	},
 	"lights" : [ 
 		{
 			"type":"area_light",
 			"name":"light1",
-			"position":{"x":14.9,"y":-10,"z":20},
-			"dx" : {"x":0,"y":0,"z":10},
+			"position":{"x":40,"y":-30,"z":10},
+			"dx" : {"x":0,"y":0,"z":-20},
 			"dy" : {"x":0,"y":20,"z":0},
 			"texture": {"type":"pure","r":1,"g":1,"b":1},
-			"material":{"refl":0,"diff":0,"spec":0}
+			"material":{"refl":0,"diff":0,"spec":0,"refr":0.0,"refr_k":1.0}
 		}
 	],
 	"objects" : [ 
 		{
+			"type":"bazier_curves",
+			"name":"cup",
+			"position":{"x":0,"y":0,"z":35},
+			"ctrl_pts": 
+			[[[0.0, 1.1, 1.2, 2.0], [0.04, 0.04, -0.0, -0.0]], [[2.0, 2.2, 2.0, 1.9], [-0.0, -0.0, 0.1, 0.15]], [[1.9, 1.73, 0.4, 0.2], [0.15, 0.23, -0.2, 0.4]], [[0.2, -0.1, 3.8, 3.8], [0.4, 1.3, 1.4, 2.0]], [[3.8,3.8, 3.6, 3.6], [2.0, 2.2, 2.2, 2.0]], [[3.6, 3.6, 0.25, 0.0], [2.0, 1.9, 1.3, 1.3]]],
+			"texture": {"type":"pure","r":0.7,"g":0.7,"b":0.3},
+			"absorb": {"type":"pure","r":0.1,"g":0.1,"b":0.5},
+			"material":{"refl":0.5,"diff":0.5,"spec":1.0,"refr":0.5,"refr_k":1.3}
+		},
+		{
 			"type":"sphere",
 			"name":"ball",
-			"center":{"x":0,"y":0,"z":20},
-			"radius":10,
-			"material":{"refl":0.5,"diff":0.1,"spec":0.4},
-			"texture": {"type":"pure","r":1,"g":0,"b":1}
+			"center":{"x":2,"y":-4,"z":30},
+			"radius":2,
+			"texture": {"type":"pure","r":0.7,"g":0,"b":0.7},
+			"absorb": {"type":"pure","r":0.2,"g":0.7,"b":0.2},
+			"material":{"refl":0.4,"diff":0.0,"spec":0.6,"refr":0.9,"refr_k":1.3}
+		}, 
+		{
+			"type":"sphere",
+			"name":"marble",
+			"center":{"x":3,"y":8,"z":35},
+			"radius":3,
+			"texture":{
+				"type":"picture",
+				"filename":"materials/marble.bmp",
+				"rx":2,
+				"ry":3.14
+			},
+			"absorb": {"type":"pure","r":0.2,"g":0.7,"b":0.2},
+			"material":{"refl":0.0,"diff":1.0,"spec":0.6,"refr":0.0,"refr_k":1.0}
 		}, 
 		{
 			"type":"plane",
-			"name":"wall-forward",
-			"position":{"x":-15,"y":-30,"z":40},
-			"dx":{"x":30,"y":0,"z":0},
-			"dy":{"x":0,"y":60,"z":0},
-			"texture":{"type":"pure","r":0,"g":1,"b":1},
-			"material":{"refl":0,"diff":1.0,"spec":0}
-		},
-		{
-			"type":"plane",
-			"name":"wall-backward",
-			"position":{"x":-15,"y":-30,"z":-40},
-			"dx":{"x":30,"y":0,"z":0},
-			"dy":{"x":0,"y":60,"z":0},
-			"texture":{"type":"pure","r":1,"g":0,"b":0},
-			"material":{"refl":0,"diff":1.0,"spec":0}
-		},
-		{
-			"type":"plane",
-			"name":"wall-left",
-			"position":{"x":-15,"y":-30,"z":-20},
-			"dx":{"x":0,"y":0,"z":80},
-			"dy":{"x":30,"y":0,"z":0},
-			"texture":{"type":"pure","r":1,"g":0,"b":1},
-			"material":{"refl":0.4,"diff":0.5,"spec":0.1}
-		},
-		{
-			"type":"plane",
-			"name":"wall-right",
-			"position":{"x":-15,"y":30,"z":-20},
-			"dx":{"x":0,"y":0,"z":80},
-			"dy":{"x":30,"y":0,"z":0},
-			"texture":{"type":"pure","r":0,"g":0,"b":1},
-			"material":{"refl":0.4,"diff":0.5,"spec":0.1}
-		},
-		{
-			"type":"plane",
-			"name":"wall-top",
-			"position":{"x":15,"y":-30,"z":-20},
-			"dx":{"x":0,"y":0,"z":80},
-			"dy":{"x":0,"y":60,"z":0},
-			"texture":{"type":"pure","r":1,"g":1,"b":0},
-			"material":{"refl":0,"diff":1.0,"spec":0}
-		},
-		{
-			"type":"plane",
-			"name":"wall-bottom",
-			"position":{"x":-15,"y":-30,"z":-20},
-			"dx":{"x":0,"y":0,"z":80},
-			"dy":{"x":0,"y":60,"z":0},
+			"name":"floor",
+			"position":{"x":0,"y":-10,"z":25},
+			"dx":{"x":0,"y":0,"z":30},
+			"dy":{"x":0,"y":20,"z":0},
 			"texture":{
 				"type":"picture",
-				"filename":"materials/floor.jpg",
-				"rx":5,
-				"ry":5
+				"filename":"materials/floor2.jpg",
+				"rx":8,
+				"ry":8
 			},
-			"material":{"refl":0,"diff":1.0,"spec":0}
-		} ],
-	"bg_texture" : {"type":"pure","r":0.5,"g":0.5,"b":0.5},
+			"material":{"refl":0.4,"diff":0.6,"spec":0.0,"refr":0.0,"refr_k":1.0},
+			"border":false
+		}
+	],
+	"bg_color" : {"type":"pure","r":0,"g":0,"b":0},
 	"shade_quality" : 50,
 	"spec_power": 20,
-	"max_depth" : 5
+	"max_depth" : 4,
+	"bazier_quality" : 30,
+	"start_rows" : 0
 }

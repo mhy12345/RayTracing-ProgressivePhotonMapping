@@ -8,7 +8,6 @@ class Sphere : public Object {
 	private:
 		Vector O;
 		double radius;
-		Color color;
 	public:
 		Sphere();
 		virtual void accept(const Json::Value& val);

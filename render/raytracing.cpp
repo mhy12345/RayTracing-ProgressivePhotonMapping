@@ -4,6 +4,7 @@
 #include "../objects/sphere.h"
 #include "../objects/area_light.h"
 #include "../objects/plane.h"
+#include "../objects/bazier_curve.h"
 #include "glog/logging.h"
 #include <iostream>
 
@@ -22,11 +23,12 @@ RayTracing::~RayTracing() {
 }
 
 void RayTracing::accept(const Json::Value& val) {
+	Render::accept(val);
 	DLOG(INFO)<<"RayTracing : "<<val.toStyledString()<<std::endl;
 	DLOG(INFO)<<"RayTracing : Init camera"<<std::endl;
 
 	if (val["camera"]["type"].asString() == "default") {
-		camera = new Camera();
+		camera = new Camera(rx,ry);
 		camera->accept(val["camera"]);
 	}
 
@@ -41,6 +43,13 @@ void RayTracing::accept(const Json::Value& val) {
 		}else if (tag == "plane") {
 			objects.push_back(new Plane());
 			objects.back()->accept(v);
+		} else if (tag == "bazier_curves") {
+			int n = v["ctrl_pts"].size();
+			for (int i=0;i<n;i++) {
+				//if (i!=0 && i!=5)continue;
+				objects.push_back(new BazierCurve(i));
+				objects.back()->accept(v);
+			}
 		}else if(tag[0] == '#') {
 		}else {
 			DLOG(ERROR)<<"Strange Object <"<<tag<<std::endl;
@@ -65,32 +74,55 @@ void RayTracing::accept(const Json::Value& val) {
 	max_depth = val["max_depth"].asInt();
 	shade_quality = val["shade_quality"].asInt();
 	spec_power = val["spec_power"].asInt();
+	start_rows = val["start_rows"].asInt();
+	bazier_quality = val["bazier_quality"].asInt();
 	DLOG(INFO)<<"RayTracing : Data accepted"<<std::endl;
-	board = new Color[camera->getRx()*camera->getRy()];
-	for (int i=0;i<camera->getRx()*camera->getRy();i++)
+	board = new Color[rx*ry];
+	for (int i=0;i<rx*ry;i++)
 		board[i] = Color(1,1,1);
 }
 
 
 Color RayTracing::calcReflection(const Object& obj, const Collision& obj_coll, int depth, unsigned&hash) {
-	DLOG(INFO)<<"calcReflection... <d="<<depth<<",h="<<hash<<">"<<std::endl;
+	//LOG(INFO)<<"calcReflection... <d="<<depth<<",h="<<hash<<">"<<std::endl;
 	DLOG(INFO)<<"REFLECTION POSITION : "<<obj_coll.description()<<std::endl;
 	if (depth > max_depth) {
 		hash = hash * 17 + 233;
 		return bg_color;
 	}
-	Color result = (rayTrace(obj_coll.C,obj_coll.D,depth,hash) * obj.getMaterial().refl).adjust();
 	hash = hash * 17 + obj.getHash();
-	return result;
+	return (rayTrace(obj_coll.getSurfaceC(),obj_coll.D,depth,hash) * obj.getMaterial().refl).adjust();
+}
+
+Color RayTracing::calcRefraction(const Object& obj, const Collision& obj_coll, int depth, unsigned& hash) {
+	DLOG(INFO)<<"calcRefraction... <d="<<depth<<",h="<<hash<<">"<<std::endl;
+	if (depth > max_depth) {
+		hash = hash * 19 + 233;
+		return bg_color;
+	}
+	hash = hash * 19 + obj.getHash();
+	Vector rayD;
+	Vector rayO;
+	Color acol;
+	obj_coll.refraction(rayO,rayD);
+	Color rcol = rayTrace(rayO,rayD,depth,hash);
+	if (obj_coll.face)
+		rcol = rcol*obj.getMaterial().refr;
+	if (!obj_coll.face)
+		acol = (obj.getAbsorb().getColor(0,0)*-obj_coll.dist).exp();
+	else
+		acol = Color(1,1,1);
+
+	return (rcol*acol).adjust();
 }
 
 Color RayTracing::calcDiffusion(const Object& obj, const Collision& obj_coll) {
-	DLOG(INFO)<<"calcDiffusion..."<<std::endl;
+	//LOG(INFO)<<"calcDiffusion..."<<std::endl;
 	Color color = obj.getColor(obj_coll.C);
 	DLOG(INFO)<<"DIFFUSION POSITION : "<<obj_coll.description()<<std::endl;
-	Color ret = color * bg_color;
+	Color ret = color * bg_color *(1-obj.getMaterial().diff-obj.getMaterial().spec);
 	for (auto &lgt : lights) {
-		double shade = lgt->getShade(obj_coll.C,objects,shade_quality);
+		double shade = lgt->getShade(obj_coll.getSurfaceC(),objects,shade_quality);
 		ret += color * lgt->getColor(lgt->getCenter()) * shade * obj.getMaterial().diff;
 		double spec_ratio = (lgt->getCenter() - obj_coll.C).unit() ^ obj_coll.N.unit();
 		if (spec_ratio > 0)
@@ -134,7 +166,7 @@ const Light* RayTracing::findCollidedLight(const Vector& _rayO, const Vector& _r
 }
 
 Color RayTracing::rayTrace(const Vector& rayO, const Vector& rayD, int depth, unsigned& hash) {
-	DLOG(INFO)<<"Ray Trace... <d="<<depth<<",h="<<hash<<">"<<std::endl;
+	//LOG(INFO)<<"Ray Trace... <d="<<depth<<",h="<<hash<<">"<<std::endl;
 	Collision obj_coll,lgt_coll;
 	const Object* obj = findCollidedObject(rayO,rayD,obj_coll);
 	const Light* lgt = findCollidedLight(rayO,rayD,lgt_coll);
@@ -150,45 +182,53 @@ Color RayTracing::rayTrace(const Vector& rayO, const Vector& rayD, int depth, un
 			ret += calcReflection(*obj,obj_coll,depth+1,hash);
 		if (obj->getMaterial().diff>feps || obj->getMaterial().spec>feps)
 			ret += calcDiffusion(*obj,obj_coll);
+		if (obj->getMaterial().refr>feps)
+			ret += calcRefraction(*obj,obj_coll,depth+1,hash);
 		return ret.adjust();
 	}
 }
 
 void RayTracing::run() {
 	LOG(INFO)<<"Sampling..."<<std::endl;
-	hash_table = new unsigned*[camera->getRx()];
-	for (int i=0;i<camera->getRx();i++)
-		hash_table[i] = new unsigned[camera->getRy()];
-#pragma omp parallel
-#pragma omp for schedule(dynamic,5)
-	for (int i=0;i<camera->getRx();i++){
+	hash_table = new unsigned*[rx];
+	for (int i=0;i<rx;i++)
+		hash_table[i] = new unsigned[ry];
 #ifdef USE_OPENMP
-		std::cout<<omp_get_num_threads()<<std::endl;
+#pragma omp parallel
+#pragma omp for schedule(dynamic,3)
+#endif
+	for (int _i=start_rows;_i<rx;_i++){
+		int i = _i;
+#ifdef USE_OPENMP
+		if (!i)
+			std::cout<<omp_get_num_threads()<<std::endl;
 #endif
 		printf("Render row #%d\n",i);
-		for (int j=0;j<camera->getRy();j++) {
+		for (int j=0;j<ry;j++) {
 			LOG(INFO)<<"RENDER POSITION <"<<i<<","<<j<<">"<<std::endl;
 			Vector rayO,rayD;
 			camera->getRay(i,j,rayO,rayD);
-			DLOG(INFO)<<"RayO = "<<rayO.description()<<std::endl;
-			DLOG(INFO)<<"RayD = "<<rayD.description()<<std::endl;
+			DLOG(INFO)<<"	RayO = "<<rayO.description()<<std::endl;
+			DLOG(INFO)<<"	RayD = "<<rayD.description()<<std::endl;
 			Color cc = rayTrace(rayO,rayD,0,hash_table[i][j]);
-			board[i*camera->getRy()+j] = cc;
+			board[i*ry+j] = cc;
 			LOG(INFO)<<"Color = "<<cc.description()<<std::endl;
 		}
 	}
 	LOG(INFO)<<"Resampling..."<<std::endl;
+#ifdef USE_OPENMP
 #pragma omp for schedule(dynamic,5)
-	for (int i=0;i<camera->getRx();i++) {
-		for (int j=0;j<camera->getRy();j++) {
+#endif
+	for (int i=0;i<rx;i++) {
+		for (int j=0;j<ry;j++) {
 			bool flag = false;
 			if (i!=0 && hash_table[i][j] != hash_table[i-1][j])
 				flag = true;
-			if (i!=camera->getRx()-1 && hash_table[i][j] != hash_table[i+1][j])
+			if (i!=rx-1 && hash_table[i][j] != hash_table[i+1][j])
 				flag = true;
 			if (j!=0 && hash_table[i][j] != hash_table[i][j-1])
 				flag = true;
-			if (j!=camera->getRy()-1 && hash_table[i][j] != hash_table[i][j+1])
+			if (j!=ry-1 && hash_table[i][j] != hash_table[i][j+1])
 				flag = true;
 			if (flag) {
 				Color res;
@@ -201,22 +241,13 @@ void RayTracing::run() {
 					}
 				}
 				res = res*(1.0/9);
-				board[i*camera->getRy() + j] = res;
+				board[i*ry + j] = res;
 			}
 		}
 	}
-	for (int i=0;i<camera->getRx();i++) {
+	for (int i=0;i<rx;i++) {
 		delete[] hash_table[i];
 	}
 	delete[] hash_table;
 }
 
-void RayTracing::update() {
-	this->paint_board->update();
-}
-
-void RayTracing::registerPaintBoard(PaintBoard* pb) {
-	assert(camera);
-	paint_board = pb;
-	paint_board->init(camera->getRx(),camera->getRy(),&board);
-}

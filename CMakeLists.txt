@@ -6,21 +6,26 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 
 SET(CMAKE_BUILD_TYPE "Release")
 #SET(CMAKE_BUILD_TYPE "Debug")
-SET(CMAKE_CXX_FLAGS_DEBUG "$ENV{CXXFLAGS} -O0 -Wall -g -Wunused-function -std=c++11")
+SET(CMAKE_CXX_FLAGS_DEBUG "$ENV{CXXFLAGS} -O0 -Wall -g -Wunused-function -std=c++11 -fopenmp")
 SET(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -O3 -Wall -std=c++11 -DNDEBUG -fopenmp")
 
+find_package(OpenCV REQUIRED)
+find_package(jsoncpp REQUIRED)
+find_package(glog REQUIRED)
+find_package(Eigen3 REQUIRED)
+
 link_directories(/usr/local/opt/llvm/lib)
+include_directories(${EIGEN3_INCLUDE_DIR})
 
 add_subdirectory(core)
 add_subdirectory(display)
 add_subdirectory(render)
 add_subdirectory(objects)
-add_subdirectory(jsoncpp)
+add_subdirectory(samples)
+#add_subdirectory(jsoncpp)
+#add_subdirectory(eigen)
 
-find_package(OpenCV REQUIRED)
-find_package(jsoncpp REQUIRED)
-find_package(glog REQUIRED)
-#find_package(OpenMP REQUIRED)
+
 
 add_executable(main main.cpp)
 #target_compile_options(main PUBLIC PUBLIC -fopenmp)

@@ -13,7 +13,7 @@ class Texture
 	public:
 		Texture();
 		virtual ~Texture();
-		virtual Color getColor(double dx=0,double dy=0) = 0;
+		virtual Color getColor(double dx=0,double dy=0)const = 0;
 		virtual void accept(const Json::Value& val) = 0;
 		virtual int getType() = 0;
 };
@@ -24,7 +24,7 @@ class PureColorTexture : public Texture {
 	public:
 		PureColorTexture();
 		~PureColorTexture();
-		Color getColor(double,double);
+		Color getColor(double,double)const;
 		int getType(){return TEXTURE_PURE_COLOR;}
 		void accept(const Json::Value& val);
 };
@@ -37,7 +37,7 @@ class PictureTexture : public Texture {
 	public:
 		PictureTexture();
 		~PictureTexture();
-		Color getColor(double,double);
+		Color getColor(double,double)const;
 		int getType(){return TEXTURE_PICTURE;}
 		void accept(const Json::Value& val);
 };

@@ -1,7 +1,7 @@
 #include "camera.h"
 #include "glog/logging.h"
 
-Camera::Camera() {
+Camera::Camera(int rx,int ry):rx(rx),ry(ry) {
 }
 Camera::~Camera() {
 }
@@ -12,14 +12,10 @@ void Camera :: accept(const Json::Value& val) {
 	DLOG(INFO)<<"Camera : Init dx/dy"<<std::endl;
 	dx.accept(val["dx"]);
 	dy.accept(val["dy"]);
-	DLOG(INFO)<<"Camera : Init rx/ry"<<std::endl;
-	rx = val["rx"].asInt();
-	ry = val["ry"].asInt();
 	DLOG(INFO)<<"Camera : Init origin"<<std::endl;
 	origin.accept(val["origin"]);
 	DLOG(INFO)<<"Camera : Data accpeted."<<std::endl;
 	DLOG(INFO)<<"Camera : rx/ry = "<<rx<<" "<<ry<<std::endl;
-	assert(rx>1 && ry>1);
 }
 
 void Camera::getRay(double scanX,double scanY, Vector& rayO, Vector& rayD) {
