@@ -16,7 +16,6 @@ Object::~Object() {
 }
 
 void Collision::refraction(Vector& resO, Vector& resD)const {
-	LOG(INFO)<<"face = "<<face<<std::endl;
 	Vector _N = N*(N^D);
 	Vector In = (_N*2 - D).reverse();
 	double cosI = N.reverse()^In;
@@ -26,7 +25,6 @@ void Collision::refraction(Vector& resO, Vector& resD)const {
 		resO = getBackfaceC();
 		resD = In*n + N*(n*cosI - sqrt(cosT2));
 		DLOG(INFO)<<"The refrection..."<<std::endl;
-		DLOG(INFO)<<"In = "<<In.description()<<std::endl;
 		DLOG(INFO)<<"Out = "<<resD.description()<<std::endl;
 	}else {
 		resO = getSurfaceC();

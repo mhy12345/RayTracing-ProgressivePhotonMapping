@@ -6,18 +6,16 @@
 #include "../core/camera.h"
 #include "../core/object.h"
 #include "../core/color.h"
-#include "../display/paintboard.h"
 #include "json/json.h"
+#include "render.h"
 
-class RayTracing{
+class RayTracing : public Render{
 	private:
 		Camera *camera;
 		std::vector<Light*> lights;
 		std::vector<Object*> objects;
 		Color bg_color;
-		Color *board;
 		unsigned **hash_table;
-		PaintBoard* paint_board;
 		int max_depth;
 		int shade_quality;
 		int spec_power;
@@ -41,8 +39,6 @@ class RayTracing{
 		Color rayTrace(const Vector& rayO, const Vector& rayD, int depth, unsigned& hash);
 
 		void run();
-		void registerPaintBoard(PaintBoard* pb) ;
-		void update();
 };
 
 #endif

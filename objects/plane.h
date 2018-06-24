@@ -7,6 +7,7 @@ class Plane : public Object {
 	private:
 		Vector O;
 		Vector dx,dy;
+		bool border;
 	public:
 		Plane();
 		Plane(Vector O,Vector dx,Vector dy);

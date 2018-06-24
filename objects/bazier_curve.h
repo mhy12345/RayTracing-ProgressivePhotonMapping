@@ -14,7 +14,7 @@ class BazierCurve : public Object {
 		double px[4];
 		double py[4];
 		double maxX,minX;
-		double maxR;
+		double maxR,minR;
 	public:
 		BazierCurve(int id);
 		virtual void accept(const Json::Value& val);
@@ -29,6 +29,7 @@ class BazierCurve : public Object {
 		Eigen::Matrix3d getdF(double t,double u,double theta,const Eigen::Vector3d& O,const Eigen::Vector3d& D);
 		bool initArgs(double &t,double &u,double &theta,Vector rayO,Vector rayD,double _u);
 		bool checkCollision(const Vector& rayO,const Vector& rayD);
+		int cylinderCollision(const Vector& rayO,const Vector& rayD,double r);
 };
 
 #endif

@@ -14,6 +14,7 @@ void Plane::accept(const Json::Value& val) {
 	O.accept(val["position"]);
 	dx.accept(val["dx"]);
 	dy.accept(val["dy"]);
+	border = val["border"].asBool();
 }
 
 Color Plane::getColor(const Vector& pos)const {
@@ -47,13 +48,12 @@ bool Plane::collideWith(const Vector& rayO,const Vector& rayD,Collision& collisi
 	collision.face = (rayD^N) < 0;//True : front face, the ray hit toward to plane
 	double r1 = ((collision.C - O)^dx)/dx.sqrlen();
 	double r2 = ((collision.C - O)^dy)/dy.sqrlen();
-	if (r1>1-feps || r2>1-feps || r1<feps || r2<feps) {
+	if (border && (r1>1-feps || r2>1-feps || r1<feps || r2<feps) ){
 		DLOG(WARNING)<<"Plane <"<<name<<">: no intersection ("<<r1<<" "<<r2<<")"<<std::endl;
 		return false;
 	}
 	collision.N = collision.face ? N : -N;
 	collision.D = N*(rayD.reverse()^N)*2-rayD.reverse();
-	DLOG(INFO)<<"Plane <"<<name<<">: hitted"<<std::endl;
-	DLOG(INFO)<<collision.description()<<std::endl;
+	DLOG(INFO)<<"Plane <"<<name<<">: hitted at "<<collision.description()<<std::endl;
 	return true;
 }

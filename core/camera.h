@@ -9,11 +9,9 @@ class Camera {
 		Vector origin;
 		int rx,ry;
 	public:
-		Camera();
+		Camera(int rx,int ry);
 		~Camera();
 		void accept(const Json::Value& val);
-		int getRx()const {return rx;}
-		int getRy()const {return ry;}
 		void getRay(double scanX, double scanY, Vector &rayO, Vector &rayD);
 };
 

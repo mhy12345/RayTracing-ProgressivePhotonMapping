@@ -23,11 +23,12 @@ RayTracing::~RayTracing() {
 }
 
 void RayTracing::accept(const Json::Value& val) {
+	Render::accept(val);
 	DLOG(INFO)<<"RayTracing : "<<val.toStyledString()<<std::endl;
 	DLOG(INFO)<<"RayTracing : Init camera"<<std::endl;
 
 	if (val["camera"]["type"].asString() == "default") {
-		camera = new Camera();
+		camera = new Camera(rx,ry);
 		camera->accept(val["camera"]);
 	}
 
@@ -76,8 +77,8 @@ void RayTracing::accept(const Json::Value& val) {
 	start_rows = val["start_rows"].asInt();
 	bazier_quality = val["bazier_quality"].asInt();
 	DLOG(INFO)<<"RayTracing : Data accepted"<<std::endl;
-	board = new Color[camera->getRx()*camera->getRy()];
-	for (int i=0;i<camera->getRx()*camera->getRy();i++)
+	board = new Color[rx*ry];
+	for (int i=0;i<rx*ry;i++)
 		board[i] = Color(1,1,1);
 }
 
@@ -189,28 +190,28 @@ Color RayTracing::rayTrace(const Vector& rayO, const Vector& rayD, int depth, un
 
 void RayTracing::run() {
 	LOG(INFO)<<"Sampling..."<<std::endl;
-	hash_table = new unsigned*[camera->getRx()];
-	for (int i=0;i<camera->getRx();i++)
-		hash_table[i] = new unsigned[camera->getRy()];
+	hash_table = new unsigned*[rx];
+	for (int i=0;i<rx;i++)
+		hash_table[i] = new unsigned[ry];
 #ifdef USE_OPENMP
 #pragma omp parallel
 #pragma omp for schedule(dynamic,3)
 #endif
-	for (int _i=start_rows;_i<camera->getRx();_i++){
+	for (int _i=start_rows;_i<rx;_i++){
 		int i = _i;
 #ifdef USE_OPENMP
 		if (!i)
 			std::cout<<omp_get_num_threads()<<std::endl;
 #endif
 		printf("Render row #%d\n",i);
-		for (int j=0;j<camera->getRy();j++) {
+		for (int j=0;j<ry;j++) {
 			LOG(INFO)<<"RENDER POSITION <"<<i<<","<<j<<">"<<std::endl;
 			Vector rayO,rayD;
 			camera->getRay(i,j,rayO,rayD);
 			DLOG(INFO)<<"	RayO = "<<rayO.description()<<std::endl;
 			DLOG(INFO)<<"	RayD = "<<rayD.description()<<std::endl;
 			Color cc = rayTrace(rayO,rayD,0,hash_table[i][j]);
-			board[i*camera->getRy()+j] = cc;
+			board[i*ry+j] = cc;
 			LOG(INFO)<<"Color = "<<cc.description()<<std::endl;
 		}
 	}
@@ -218,16 +219,16 @@ void RayTracing::run() {
 #ifdef USE_OPENMP
 #pragma omp for schedule(dynamic,5)
 #endif
-	for (int i=0;i<camera->getRx();i++) {
-		for (int j=0;j<camera->getRy();j++) {
+	for (int i=0;i<rx;i++) {
+		for (int j=0;j<ry;j++) {
 			bool flag = false;
 			if (i!=0 && hash_table[i][j] != hash_table[i-1][j])
 				flag = true;
-			if (i!=camera->getRx()-1 && hash_table[i][j] != hash_table[i+1][j])
+			if (i!=rx-1 && hash_table[i][j] != hash_table[i+1][j])
 				flag = true;
 			if (j!=0 && hash_table[i][j] != hash_table[i][j-1])
 				flag = true;
-			if (j!=camera->getRy()-1 && hash_table[i][j] != hash_table[i][j+1])
+			if (j!=ry-1 && hash_table[i][j] != hash_table[i][j+1])
 				flag = true;
 			if (flag) {
 				Color res;
@@ -240,22 +241,13 @@ void RayTracing::run() {
 					}
 				}
 				res = res*(1.0/9);
-				board[i*camera->getRy() + j] = res;
+				board[i*ry + j] = res;
 			}
 		}
 	}
-	for (int i=0;i<camera->getRx();i++) {
+	for (int i=0;i<rx;i++) {
 		delete[] hash_table[i];
 	}
 	delete[] hash_table;
 }
 
-void RayTracing::update() {
-	this->paint_board->update();
-}
-
-void RayTracing::registerPaintBoard(PaintBoard* pb) {
-	assert(camera);
-	paint_board = pb;
-	paint_board->init(camera->getRx(),camera->getRy(),&board);
-}
