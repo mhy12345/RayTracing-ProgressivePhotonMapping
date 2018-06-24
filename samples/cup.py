@@ -8,15 +8,31 @@ def bazier(pts,t):
             3 * pts[2] * t**2 * (1-t)**1 + \
             1 * pts[3] * t**3 * (1-t)**0
 
+def gen_config(pts):
+    print(pts)
+    res = []
+    for i in range(0,len(pts)-1):
+        res.extend((pts[i][1][0],pts[i][2][0],pts[i+1][0][0],pts[i+1][1][0],
+            pts[i][1][1],pts[i][2][1],pts[i+1][0][1],pts[i+1][1][1]
+            ))
+    res = np.array(res).reshape((-1,2,4))
+    res[:,1,:] = -res[:,1,:]
+    res *= 2
+    print(res.tolist())
+
+
 ctrl_pts = np.array([
-        ((-1,-.04),(0,-.04),(1.1,-.04)),
-        ((1.2,0),(2,0),(2.2,0)),
-        ((2,-.1),(1.9,-.15),(1.73,-.23)),
-        ((.4,.2),(.2,-.4),(-.1,-1.3)),
-        ((2.8,-1.4),(2.8,-2),(2.8,-2.2)),
-        ((2.6,-2.2),(2.6,-2),(2.6,-1.9)),
-        ((0.25,-1.3),(0,-1.3),(-.25,-1.3))
-        ])
+    ((-1,-.04),(0,-.04),(1.1,-.04)),
+    ((1.2,0),(2,0),(2.2,0)),
+    ((2,-.1),(1.9,-.15),(1.73,-.23)),
+    ((.4,.2),(.2,-.4),(-.1,-1.3)),
+    ((2.8,-1.4),(2.8,-2),(2.8,-2.2)),
+    ((2.6,-2.2),(2.6,-2),(2.6,-1.9)),
+    ((0.25,-1.3),(0,-1.3),(-.25,-1.3))
+    ])
+
+gen_config(ctrl_pts)
+exit()
 
 SIZE = 300
 CENTER = SIZE // 2
@@ -31,12 +47,13 @@ for i in range(len(ctrl_pts)-1):
     for t in np.linspace(0,1,100):
         res.append(bazier(pts,t))
     res = np.array(res)
-    res = (res*50).astype(np.int)+CENTER
+    res = (res*40).astype(np.int)+CENTER
     for r in res:
+        if r[0]>=300 or r[1]>=300:
+            continue
         canvas[r[1],r[0],2] = 0
-    print(res)
 
-ctrl_pts = (ctrl_pts*50).astype(np.int)+CENTER
+ctrl_pts = (ctrl_pts*40).astype(np.int)+CENTER
 for start,pos,end in ctrl_pts:
     print("Start = ",start)
     cv2.line(canvas,tuple(start.tolist()),tuple(pos.tolist()),(0,0,0),1)

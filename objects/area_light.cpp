@@ -66,5 +66,6 @@ double AreaLight::getShade(const Vector& _rayO,std::vector<Object*> olist, int s
 	}
 	double shade = success_count / (9.0*shade_quality);
 	DLOG(INFO)<<"Area Light <"<<name<<"> - shade : "<<shade<<std::endl;
+	//if (success_count)shade = 1;
 	return shade;
 }

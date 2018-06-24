@@ -6,7 +6,7 @@
 
 #define INF 0x3f3f3f3f
 #define inf 1e100
-#define feps 1e-8
+#define feps 1e-7
 
 class Vector
 {

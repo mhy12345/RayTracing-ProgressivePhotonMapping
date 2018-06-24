@@ -25,14 +25,14 @@ void Collision::refraction(Vector& resO, Vector& resD)const {
 	if (cosT2 > feps) {
 		resO = getBackfaceC();
 		resD = In*n + N*(n*cosI - sqrt(cosT2));
-		LOG(INFO)<<"The refrection..."<<std::endl;
-		LOG(INFO)<<"In = "<<In.description()<<std::endl;
-		LOG(INFO)<<"Out = "<<resD.description()<<std::endl;
+		DLOG(INFO)<<"The refrection..."<<std::endl;
+		DLOG(INFO)<<"In = "<<In.description()<<std::endl;
+		DLOG(INFO)<<"Out = "<<resD.description()<<std::endl;
 	}else {
 		resO = getSurfaceC();
 		resD = D;
-		LOG(INFO)<<"The full refraction..."<<std::endl;
-		LOG(INFO)<<"Out = "<<resD.description()<<std::endl;
+		DLOG(INFO)<<"The full refraction..."<<std::endl;
+		DLOG(INFO)<<"Out = "<<resD.description()<<std::endl;
 	}
 }
 

@@ -6,8 +6,13 @@ Q = np.matrix([[0],[0],[0]])
 P = np.matrix([(0,-.04),(1.1,-.04),(1.2,0),(2,0)])
 
 #Ray Info
-O = np.matrix("0.7071067811865475;0.7071067811865475;0")
-D = np.matrix("0;0;1")
+O = np.matrix("0;0;10")
+D = np.matrix("0;-.1;-1")
+
+#O = np.matrix("-2;0;0")
+#D = np.matrix("0;0;-1")
+
+D = D / np.dot(D.T,D)
 
 
 def getP(t):
@@ -66,22 +71,24 @@ def getdF(t,u,theta):
 #print(getF(0,0,0))
 lr = 1
 
-u = 0.01
-theta = 1
 t = 0
-print(getC(t),getS(u,theta))
+u = 20
+theta = 3
+
 args = np.matrix([[t],[u],[theta]])
-for i in range(10):
+for i in range(20):
     t,u,theta = np.array(args)[:,0].tolist()
     print("t,u,theta = ",t,u,theta)
     F = getF(t,u,theta)
     print("F = \n",F)
     dF = getdF(t,u,theta)
-    print("...",u,getPx(u))
     print("dF = \n",dF)
     if not (abs(F)>1e-8).any():
         print("OKAY")
         break
     args = args - (dF.I*F)*lr
-    args[2]%=3.1415926535
+    t,u,theta = np.array(args)[:,0].tolist()
+    theta %= 2*3.1415926535
+    #u = max(0,u)
+    args = np.matrix([[t],[u],[theta]])
 print("Result = ",args)

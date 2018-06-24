@@ -22,6 +22,7 @@ class RayTracing{
 		int shade_quality;
 		int spec_power;
 		int start_rows;
+		int bazier_quality;
 	public:
 		//INIT
 		RayTracing();

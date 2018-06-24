@@ -4,6 +4,7 @@
 #include "../objects/sphere.h"
 #include "../objects/area_light.h"
 #include "../objects/plane.h"
+#include "../objects/bazier_curve.h"
 #include "glog/logging.h"
 #include <iostream>
 
@@ -41,6 +42,13 @@ void RayTracing::accept(const Json::Value& val) {
 		}else if (tag == "plane") {
 			objects.push_back(new Plane());
 			objects.back()->accept(v);
+		} else if (tag == "bazier_curves") {
+			int n = v["ctrl_pts"].size();
+			for (int i=0;i<n;i++) {
+				//if (i!=0 && i!=5)continue;
+				objects.push_back(new BazierCurve(i));
+				objects.back()->accept(v);
+			}
 		}else if(tag[0] == '#') {
 		}else {
 			DLOG(ERROR)<<"Strange Object <"<<tag<<std::endl;
@@ -66,6 +74,7 @@ void RayTracing::accept(const Json::Value& val) {
 	shade_quality = val["shade_quality"].asInt();
 	spec_power = val["spec_power"].asInt();
 	start_rows = val["start_rows"].asInt();
+	bazier_quality = val["bazier_quality"].asInt();
 	DLOG(INFO)<<"RayTracing : Data accepted"<<std::endl;
 	board = new Color[camera->getRx()*camera->getRy()];
 	for (int i=0;i<camera->getRx()*camera->getRy();i++)
@@ -85,7 +94,7 @@ Color RayTracing::calcReflection(const Object& obj, const Collision& obj_coll, i
 }
 
 Color RayTracing::calcRefraction(const Object& obj, const Collision& obj_coll, int depth, unsigned& hash) {
-	LOG(INFO)<<"calcRefraction... <d="<<depth<<",h="<<hash<<">"<<std::endl;
+	DLOG(INFO)<<"calcRefraction... <d="<<depth<<",h="<<hash<<">"<<std::endl;
 	if (depth > max_depth) {
 		hash = hash * 19 + 233;
 		return bg_color;
@@ -185,7 +194,7 @@ void RayTracing::run() {
 		hash_table[i] = new unsigned[camera->getRy()];
 #ifdef USE_OPENMP
 #pragma omp parallel
-#pragma omp for schedule(dynamic,5)
+#pragma omp for schedule(dynamic,3)
 #endif
 	for (int _i=start_rows;_i<camera->getRx();_i++){
 		int i = _i;

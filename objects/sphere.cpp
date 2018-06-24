@@ -21,9 +21,11 @@ Color Sphere::getColor(const Vector&v)const {
 		Vector tmp = (v - O)/radius;
 		if (!tmp.isUnit())
 			LOG(FATAL)<<"The vector is not on the surface!"<<std::endl;
-		double x = asin(tmp.getZ());
+		double x = asin(tmp.getZ())+M_PI/2;
 		double y = atan2(tmp.getX(),tmp.getY());
-		return texture->getColor(x,y);
+		Color res = texture->getColor(x,y);
+		//std::cout<<res.description()<<std::endl;
+		return res;
 	}
 	assert(false);
 }

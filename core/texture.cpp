@@ -26,13 +26,12 @@ PictureTexture::~PictureTexture() {
 }
 
 Color PictureTexture::getColor(double x,double y)const { 
-	int ix = int (floor(fmod(x,rx)/rx * image.rows));
-	int iy = int (floor(fmod(y,ry)/ry * image.cols));
+	int ix = (int(floor(fmod(x,rx)/rx * image.rows)) + image.rows)%image.rows;
+	int iy = (int(floor(fmod(y,ry)/ry * image.cols)) + image.cols)%image.cols;
 	assert(ix<image.rows && iy < image.cols);
 	double r = image.at<Vec3b>(ix, iy)[0]/255.0;
 	double g = image.at<Vec3b>(ix, iy)[1]/255.0;
 	double b = image.at<Vec3b>(ix, iy)[2]/255.0;
-	//std::cout<<r<<" "<<g<<" "<<b<<std::endl;
 	return Color(r,g,b);
 }
 

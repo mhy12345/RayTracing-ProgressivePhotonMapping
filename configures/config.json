@@ -2,10 +2,10 @@
 	"camera": 
 	{
 		"type":"default",
-		"position" : {"x":20,"y":-12,"z":0 },
+		"position" : {"x":20,"y":-17,"z":20 },
 		"dx" : {"x":0,"y":0,"z":-40},
-		"dy" : {"x":0,"y":24,"z":0},
-		"origin" : {"x":40,"y":0,"z":-80},
+		"dy" : {"x":0,"y":34,"z":0},
+		"origin" : {"x":50,"y":0,"z":-60},
 		"rx" : 512,
 		"ry" : 1024,
 		"_rx" : 120,
@@ -17,7 +17,7 @@
 		{
 			"type":"area_light",
 			"name":"light1",
-			"position":{"x":40,"y":10,"z":10},
+			"position":{"x":40,"y":-30,"z":10},
 			"dx" : {"x":0,"y":0,"z":-20},
 			"dy" : {"x":0,"y":20,"z":0},
 			"texture": {"type":"pure","r":1,"g":1,"b":1},
@@ -26,9 +26,19 @@
 	],
 	"objects" : [ 
 		{
-			"type":"sphere",
+			"type":"bazier_curves",
+			"name":"cup",
+			"position":{"x":0,"y":0,"z":35},
+			"ctrl_pts": 
+			[[[0.0, 2.2, 2.4, 4.0], [0.08, 0.08, -0.0, -0.0]], [[4.0, 4.4, 4.0, 3.8], [-0.0, -0.0, 0.2, 0.3]], [[3.8, 3.46, 0.8, 0.4], [0.3, 0.46, -0.4, 0.8]], [[0.4, -0.2, 5.6, 5.6], [0.8, 2.6, 2.8, 4.0]], [[5.6, 5.6, 5.2, 5.2], [4.0, 4.4, 4.4, 4.0]], [[5.2, 5.2, 0.5, 0.0], [4.0, 3.8, 2.6, 2.6]]],
+			"texture": {"type":"pure","r":0.2,"g":0.2,"b":0.0},
+			"absorb": {"type":"pure","r":0.3,"g":0.3,"b":0.1},
+			"material":{"refl":0.3,"diff":0.3,"spec":0.3,"refr":0.5,"refr_k":1.3}
+		},
+		{
+			"type":"#sphere",
 			"name":"ball",
-			"center":{"x":2,"y":0,"z":35},
+			"center":{"x":2,"y":-4,"z":35},
 			"radius":2,
 			"texture": {"type":"pure","r":1,"g":0,"b":1},
 			"absorb": {"type":"pure","r":0.2,"g":0.7,"b":0.2},
@@ -42,11 +52,11 @@
 			"texture":{
 				"type":"picture",
 				"filename":"materials/marble.bmp",
-				"rx":20,
-				"ry":20
+				"rx":2,
+				"ry":3.14
 			},
 			"absorb": {"type":"pure","r":0.2,"g":0.7,"b":0.2},
-			"material":{"refl":0.2,"diff":8.0,"spec":0.4,"refr":0.0,"refr_k":1.0}
+			"material":{"refl":0.0,"diff":1.0,"spec":0.4,"refr":0.0,"refr_k":1.0}
 		}, 
 		{
 			"type":"plane",
@@ -60,12 +70,13 @@
 				"rx":20,
 				"ry":20
 			},
-			"material":{"refl":0.0,"diff":1,"spec":0.0,"refr":0.0,"refr_k":1.0}
+			"material":{"refl":0.0,"diff":1.0,"spec":0.0,"refr":0.0,"refr_k":1.0}
 		}
    	],
 	"bg_color" : {"type":"pure","r":0,"g":0,"b":0},
 	"shade_quality" : 50,
 	"spec_power": 20,
 	"max_depth" : 4,
-	"start_rows" : 40
+	"bazier_quality" : 30,
+	"start_rows" : 0
 }
