@@ -1,10 +1,5 @@
 #include "raytracing.h"
 #include <string>
-#include "../core/object.h"
-#include "../objects/sphere.h"
-#include "../objects/area_light.h"
-#include "../objects/plane.h"
-#include "../objects/bazier_curve.h"
 #include <iostream>
 
 #ifdef USE_OPENMP
@@ -13,56 +8,15 @@
 #endif
 
 RayTracing::RayTracing() {
-	camera = NULL;
 }
 
 RayTracing::~RayTracing() {
-	if (camera)
-		delete camera;
 }
 
 void RayTracing::accept(const Json::Value& val) {
 	Render::accept(val);
+	Scene::accept(val,rx,ry);
 
-	if (val["camera"]["type"].asString() == "default") {
-		camera = new Camera(rx,ry);
-		camera->accept(val["camera"]);
-	}
-
-	for (int i=0;i<val["objects"].size();i++) {
-		Json::Value v = val["objects"][i];
-		std::string tag = v["type"].asString();
-		if (tag == "sphere") {
-			objects.push_back(new Sphere());
-			objects.back()->accept(v);
-		}else if (tag == "plane") {
-			objects.push_back(new Plane());
-			objects.back()->accept(v);
-		} else if (tag == "bazier_curves") {
-			int n = v["ctrl_pts"].size();
-			for (int i=0;i<n;i++) {
-				//if (i!=0 && i!=5)continue;
-				objects.push_back(new BazierCurve(i));
-				objects.back()->accept(v);
-			}
-		}else if(tag[0] == '#') {
-		}else {
-		}
-	}
-
-	for (int i=0;i<val["lights"].size();i++) {
-		Json::Value v = val["lights"][i];
-		std::string tag = v["type"].asString();
-
-		if (tag == "area_light") {
-			lights.push_back(new AreaLight());
-			lights.back()->accept(v);
-		}else if (tag[0] == '#') {
-
-		}else {
-		}
-	}
-	bg_color.accept(val["bg_color"]);
 	max_depth = val["max_depth"].asInt();
 	shade_quality = val["shade_quality"].asInt();
 	spec_power = val["spec_power"].asInt();
@@ -80,7 +34,9 @@ Color RayTracing::calcReflection(const Object& obj, const Collision& obj_coll, i
 		return bg_color;
 	}
 	hash = hash * 17 + obj.getHash();
-	return (rayTrace(obj_coll.getSurfaceC(),obj_coll.D,depth,hash) * obj.getMaterial().refl).adjust();
+	Vector resO,resD;
+	obj_coll.reflection(resO,resD);
+	return (rayTrace(resO,resD,depth,hash) * obj.getMaterial().refl).adjust();
 }
 
 Color RayTracing::calcRefraction(const Object& obj, const Collision& obj_coll, int depth, unsigned& hash) {
@@ -115,40 +71,6 @@ Color RayTracing::calcDiffusion(const Object& obj, const Collision& obj_coll) {
 			ret += color * lgt->getColor(lgt->getCenter()) * shade * pow(spec_ratio,spec_power) * obj.getMaterial().spec;
 	}
 	return ret.adjust();
-}
-
-const Object* RayTracing::findCollidedObject(const Vector& _rayO,const Vector& _rayD,Collision& resColl) {
-	Vector rayO = _rayO;
-	Vector rayD = _rayD;
-	Object* ret = NULL;
-	resColl.dist = inf;
-	for (auto obj : objects) {
-		Collision obj_coll;
-		if (obj->collideWith(rayO,rayD,obj_coll)) {
-			if (obj_coll.dist < resColl.dist) {
-				ret = obj;
-				resColl = obj_coll;
-			}
-		}
-	}
-	return ret;
-}
-
-const Light* RayTracing::findCollidedLight(const Vector& _rayO, const Vector& _rayD,Collision& resColl) {
-	Vector rayO = _rayO;
-	Vector rayD = _rayD;
-	Light* ret = NULL;
-	resColl.dist = inf;
-	for (auto &lgt : lights) {
-		Collision lgt_coll;
-		if (lgt->collideWith(rayO,rayD,lgt_coll)) {
-			if (lgt_coll.dist < resColl.dist) {
-				resColl = lgt_coll;
-				ret = lgt;
-			}
-		}
-	}
-	return ret;
 }
 
 Color RayTracing::rayTrace(const Vector& rayO, const Vector& rayD, int depth, unsigned& hash) {

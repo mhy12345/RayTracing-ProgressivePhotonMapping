@@ -10,12 +10,13 @@ class Object;
 struct Collision {
 	Vector C;//The Center of Collision
 	Vector N;//The normal of the plane
-	Vector D;//The direction of reflaction
+	Vector I;//The direction of reflaction
 	double dist;
 	bool face;
 	Object* belongs;
 	std::string description()const;
 	void refraction(Vector& resO, Vector& resD)const;
+	void reflection(Vector& resO, Vector& resD)const;
 	Vector getSurfaceC()const;
 	Vector getBackfaceC()const;
 };

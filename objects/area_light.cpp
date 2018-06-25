@@ -26,7 +26,7 @@ bool AreaLight :: collideWith(const Vector& rayO, const Vector& rayD,Collision& 
 	if (r1>1-feps || r2>1-feps || r1<feps || r2<feps)
 		return false;
 	collision.N = collision.face ? N : -N;
-	collision.D = N*(rayD.reverse()^N)*2-rayD.reverse();
+	collision.I = rayD;
 	return true;
 }
 

@@ -56,7 +56,7 @@ bool Sphere::collideWith(const Vector& rayO,const Vector& rayD,Collision& collis
 		else
 			collision.N = (O-collision.C).unit();
 		Vector NN = collision.N * (collision.N ^ rayD.reverse());
-		collision.D = 2*NN - rayD.reverse();
+		collision.I = rayD;
 		return true;
 	}else {
 		return false;

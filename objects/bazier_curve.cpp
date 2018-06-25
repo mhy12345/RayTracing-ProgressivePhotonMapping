@@ -142,7 +142,8 @@ bool BazierCurve::collideWith(const Vector& rayO,const Vector& rayD,Collision& c
 		if (!collision.face)
 			collision.N = collision.N.reverse();
 
-		collision.D = 2*collision.N*(collision.N^rayD.reverse()) - rayD.reverse();
+		collision.I = rayD;
+		//collision.D = 2*collision.N*(collision.N^rayD.reverse()) - rayD.reverse();
 		collision.belongs = this;
 		/*
 		   std::cout<<"I = "<<rayD.description()<<std::endl;

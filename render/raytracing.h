@@ -3,18 +3,14 @@
 
 #include <vector>
 #include "../core/light.h"
-#include "../core/camera.h"
 #include "../core/object.h"
 #include "../core/color.h"
+#include "scene.h"
 #include "json/json.h"
 #include "render.h"
 
-class RayTracing : public Render{
+class RayTracing : private Scene,public Render{
 	private:
-		Camera *camera;
-		std::vector<Light*> lights;
-		std::vector<Object*> objects;
-		Color bg_color;
 		unsigned **hash_table;
 		int max_depth;
 		int shade_quality;
@@ -27,9 +23,6 @@ class RayTracing : public Render{
 		~RayTracing();
 		virtual void accept(const Json::Value& val);
 
-		//ObjectCollision
-		const Object* findCollidedObject(const Vector &rayO,const Vector& rayD,Collision& coll);
-		const Light* findCollidedLight(const Vector& rayO,const Vector& rayD, Collision& coll);
 
 		//RayTrace
 		Color calcReflection(const Object& obj, const Collision& obj_coll, int depth, unsigned& hash);

@@ -49,6 +49,6 @@ bool Plane::collideWith(const Vector& rayO,const Vector& rayD,Collision& collisi
 		return false;
 	}
 	collision.N = collision.face ? N : -N;
-	collision.D = N*(rayD.reverse()^N)*2-rayD.reverse();
+	collision.I = rayD;
 	return true;
 }

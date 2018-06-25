@@ -15,18 +15,21 @@ Object::~Object() {
 }
 
 void Collision::refraction(Vector& resO, Vector& resD)const {
-	Vector _N = N*(N^D);
-	Vector In = (_N*2 - D).reverse();
-	double cosI = N.reverse()^In;
+	double cosI = N.reverse()^I;
 	double n = face ? 1.0/belongs->getMaterial().refr_k : belongs->getMaterial().refr_k;
 	double cosT2 = 1 - (n*n)*(1-cosI*cosI);
 	if (cosT2 > feps) {
 		resO = getBackfaceC();
-		resD = In*n + N*(n*cosI - sqrt(cosT2));
+		resD = I*n + N*(n*cosI - sqrt(cosT2));
 	}else {
-		resO = getSurfaceC();
-		resD = D;
+		reflection(resO,resD);
 	}
+}
+
+void Collision::reflection(Vector& resO, Vector& resD)const {
+	Vector _N = N*(N^I.reverse());
+	resD = (_N*2-I.reverse());
+	resO = getSurfaceC();
 }
 
 Vector Collision::getSurfaceC()const {
@@ -80,7 +83,7 @@ std::string Collision::description()const {
 	return std::string("Collision : \n") +
 		"C = "+C.description() +"\n" +
 		"N = " + N.description() + "\n" +
-		"D = " + D.description() + "\n" + 
+		"I = " + I.description() + "\n" + 
 		"dist = " + std::string(buf) + "\n" +
 		"face = " + (face?"true":"false");
 }

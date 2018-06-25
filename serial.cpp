@@ -2,6 +2,7 @@
 #include "display/paint_board.h"
 #include "json/json.h"
 #include "render/raytracing.h"
+#include "render/progressive_photon_mapping.h"
 #include <unistd.h>
 #include <fstream>
 #include <pthread.h>
@@ -10,19 +11,18 @@ bool show_graph_flag = true;
 
 int main(int argc, char** args)
 {
-
 	std::ifstream ifs("configures/config.json");
 	Json::CharReaderBuilder reader;
 	Json::Value root;  
 	JSONCPP_STRING errs;
 	Json::parseFromStream(reader, ifs, &root, &errs);
 
-	RayTracing RT;
+	Render* PPM = new RayTracing();
 	PaintBoard PB;
-	RT.accept(root);
-	RT.registerPaintBoard(&PB);
+	PPM->accept(root);
+	PPM->registerPaintBoard(&PB);
 
-	RT.run();
+	PPM->run();
 	std::cout<<"HAHA"<<std::endl;
 	//PB.update();
 	PB.save();
