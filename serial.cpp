@@ -29,7 +29,6 @@ int main(int argc, char** args)
 	RT.run();
 	std::cout<<"HAHA"<<std::endl;
 	PB.update();
-	PB.display();
-	std::cout<<"HAHA"<<std::endl;
-	cv::waitKey(0);
+	PB.save();
+	//PB.display();
 }
