@@ -34,10 +34,8 @@ int main(int argc, char** args)
 
 	while (show_graph_flag) {
 		PB.update();
-        std::cout<<"Saving..."<<std::endl;
-		PB.save_raw();
-        std::cout<<"Saved..."<<std::endl;
-		PB.display();
+		PB.save();
+	//	PB.display();
 		usleep(1000000);
 	}
 

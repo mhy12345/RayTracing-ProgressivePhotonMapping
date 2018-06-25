@@ -199,6 +199,7 @@ void RayTracing::run() {
 #pragma omp for schedule(dynamic,5)
 #endif
 	for (int i=0;i<rx;i++) {
+		printf("Resample row #%d\n",i);
 		for (int j=0;j<ry;j++) {
 			bool flag = false;
 			if (i!=0 && hash_table[i][j] != hash_table[i-1][j])
