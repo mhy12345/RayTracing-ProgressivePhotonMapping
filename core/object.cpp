@@ -1,6 +1,5 @@
 #include "object.h"
 #include <random>
-#include <glog/logging.h>
 #include <cstdlib>
 #include <iostream>
 
@@ -24,13 +23,9 @@ void Collision::refraction(Vector& resO, Vector& resD)const {
 	if (cosT2 > feps) {
 		resO = getBackfaceC();
 		resD = In*n + N*(n*cosI - sqrt(cosT2));
-		DLOG(INFO)<<"The refrection..."<<std::endl;
-		DLOG(INFO)<<"Out = "<<resD.description()<<std::endl;
 	}else {
 		resO = getSurfaceC();
 		resD = D;
-		DLOG(INFO)<<"The full refraction..."<<std::endl;
-		DLOG(INFO)<<"Out = "<<resD.description()<<std::endl;
 	}
 }
 
@@ -43,33 +38,33 @@ Vector Collision::getBackfaceC()const {
 
 void Material::accept(const Json::Value& val) {
 	if (!val.isMember("refl"))
-		DLOG(ERROR)<<"No refl found in material..."<<std::endl;
+		std::cout<<"No refl found in material..."<<std::endl;
 	refl = val["refl"].asDouble();
 	if (!val.isMember("spec"))
-		DLOG(ERROR)<<"No spec found in material..."<<std::endl;
+		std::cout<<"No spec found in material..."<<std::endl;
 	spec = val["spec"].asDouble();
 	if (!val.isMember("diff"))
-		DLOG(ERROR)<<"No diff found in material..."<<std::endl;
+		std::cout<<"No diff found in material..."<<std::endl;
 	diff = val["diff"].asDouble();
 	if (!val.isMember("refr"))
-		DLOG(ERROR)<<"No refr found in material..."<<std::endl;
+		std::cout<<"No refr found in material..."<<std::endl;
 	refr = val["refr"].asDouble();
 	if (!val.isMember("refr_k"))
-		DLOG(ERROR)<<"No refr_k found in material..."<<std::endl;
+		std::cout<<"No refr_k found in material..."<<std::endl;
 	refr_k = val["refr_k"].asDouble();
 }
 
 void Object::accept(const Json::Value& val) {
 	name = val["name"].asString();
 	if (!val.isMember("texture")) {
-		DLOG(ERROR)<<"No texture info find"<<std::endl;
+		std::cout<<"No texture info find"<<std::endl;
 	}
 	if (val["texture"]["type"] == "pure")
 		texture = new PureColorTexture();
 	else if (val["texture"]["type"] == "picture")
 		texture = new PictureTexture();
 	else
-		DLOG(FATAL)<<"Invalid Texture Type..."<<std::endl;
+		std::cout<<"Invalid Texture Type..."<<std::endl;
 	texture->accept(val["texture"]);
 	material.accept(val["material"]);
 	if (material.refr>feps)
@@ -92,7 +87,7 @@ std::string Collision::description()const {
 
 const Texture& Object::getAbsorb()const {
 	if (!absorb) {
-		LOG(FATAL)<<"The absorb not defined yet."<<std::endl;
+		std::cout<<"The absorb not defined yet."<<std::endl;
 	}
 	return *absorb;
 }

@@ -1,5 +1,4 @@
 #include "area_light.h"
-#include "glog/logging.h"
 #include <cmath>
 #include <iostream>
 #include <random>
@@ -9,12 +8,10 @@ void AreaLight :: accept(const Json::Value& val) {
 	O.accept(val["position"]);
 	dx.accept(val["dx"]);
 	dy.accept(val["dy"]);
-	DLOG(INFO)<<"AreaLight : Data accepted."<<std::endl;
 }
 
 bool AreaLight :: collideWith(const Vector& rayO, const Vector& rayD,Collision& collision) {
 	assert(rayD.isUnit());
-	DLOG(INFO)<<"Area Light : "<<rayO.description()<<" "<<rayD.description()<<std::endl;
 	Vector N = (dx*dy).unit();
 	double d = -(N^O);
 	double t = -(d+(N^rayO))/(N^rayD);
@@ -30,7 +27,6 @@ bool AreaLight :: collideWith(const Vector& rayO, const Vector& rayD,Collision& 
 		return false;
 	collision.N = collision.face ? N : -N;
 	collision.D = N*(rayD.reverse()^N)*2-rayD.reverse();
-	DLOG(INFO)<<"Area Light <"<<name<<">: hitted"<<std::endl;
 	return true;
 }
 
@@ -39,7 +35,6 @@ Vector AreaLight::getCenter()const {
 }
 
 double AreaLight::getShade(const Vector& _rayO,std::vector<Object*> olist, int shade_quality)const {
-	DLOG(INFO)<<"Calculate shade at <"<<_rayO.description()<<">"<<std::endl;
 	Vector rayO = _rayO;
 	int success_count = 0;
 	for (int i=0;i<3;i++) {
@@ -65,7 +60,6 @@ double AreaLight::getShade(const Vector& _rayO,std::vector<Object*> olist, int s
 		}
 	}
 	double shade = success_count / (9.0*shade_quality);
-	DLOG(INFO)<<"Area Light <"<<name<<"> - shade : "<<shade<<std::endl;
 	//if (success_count)shade = 1;
 	return shade;
 }

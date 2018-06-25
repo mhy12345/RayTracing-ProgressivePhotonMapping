@@ -1,5 +1,4 @@
 #include "light.h"
-#include "glog/logging.h"
 #include <iostream>
 
 Light::Light() : Object() {
@@ -12,6 +11,6 @@ void Light::accept(const Json::Value& val) {
 }
 Color Light::getColor(const Vector&)const {
 	if (texture->getType() != TEXTURE_PURE_COLOR)
-		DLOG(FATAL)<<"The getColor of Light only support PURE_COLOR_MODE"<<std::endl;
+		std::cout<<"The getColor of Light only support PURE_COLOR_MODE"<<std::endl;
 	return texture->getColor();
 }

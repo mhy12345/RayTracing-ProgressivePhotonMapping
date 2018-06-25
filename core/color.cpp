@@ -1,5 +1,4 @@
 #include "color.h"
-#include "glog/logging.h"
 #include <sstream>
 #include <algorithm>
 #include <cmath>
@@ -16,7 +15,6 @@ Color::Color(double r,double g,double b) : r(r),g(g),b(b) {
 
 Color Color::adjust()const {
 	if (r>1+feps || g>1+feps || b>1+feps)
-		LOG(INFO)<<"Color adjust from "<<description()<<std::endl;
 	return Color(min(r,1.0),min(g,1.0),min(b,1.0));
 }
 

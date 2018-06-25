@@ -2,7 +2,6 @@
 #include <cmath>
 #include <cassert>
 #include <iostream>
-#include "glog/logging.h"
 
 Sphere::Sphere() {
 }
@@ -20,7 +19,7 @@ Color Sphere::getColor(const Vector&v)const {
 	}else if (texture->getType() == TEXTURE_PICTURE) {
 		Vector tmp = (v - O)/radius;
 		if (!tmp.isUnit())
-			LOG(FATAL)<<"The vector is not on the surface!"<<std::endl;
+			std::cout<<"The vector is not on the surface!"<<std::endl;
 		double x = asin(tmp.getZ())+M_PI/2;
 		double y = atan2(tmp.getX(),tmp.getY());
 		Color res = texture->getColor(x,y);
@@ -40,7 +39,6 @@ bool Sphere::collideWith(const Vector& rayO,const Vector& rayD,Collision& collis
 	if (delta > feps) {
 		double d1 = (-b-sqrt(delta)) / (2*a);
 		double d2 = (-b+sqrt(delta)) / (2*a);
-		DLOG(INFO)<<"COLLISION DIST = "<<d1<<" "<<d2<<std::endl;
 		collision.dist = d1;
 		if (d1 < 0 && d2 < 0){
 			return false;
@@ -59,8 +57,6 @@ bool Sphere::collideWith(const Vector& rayO,const Vector& rayD,Collision& collis
 			collision.N = (O-collision.C).unit();
 		Vector NN = collision.N * (collision.N ^ rayD.reverse());
 		collision.D = 2*NN - rayD.reverse();
-		DLOG(INFO)<<"Sphere <"<<name<<"> : hitted."<<std::endl;
-		DLOG(INFO)<<collision.description()<<std::endl;
 		return true;
 	}else {
 		return false;
