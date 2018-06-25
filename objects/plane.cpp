@@ -2,7 +2,6 @@
 #include <cmath>
 #include <cassert>
 #include <iostream>
-#include "glog/logging.h"
 
 Plane::Plane() {
 }
@@ -26,20 +25,18 @@ Color Plane::getColor(const Vector& pos)const {
 		return texture->getColor(tx,ty);
 	}else
 	{
-		DLOG(FATAL)<<"The getColor of Plane only support PURE_COLOR_MODE"<<std::endl;
+		std::cout<<"The getColor of Plane only support PURE_COLOR_MODE"<<std::endl;
 		return Color();
 	}
 }
 
 bool Plane::collideWith(const Vector& rayO,const Vector& rayD,Collision& collision) {
 	assert(rayD.isUnit());
-	DLOG(INFO)<<"Calc Collision : "<<rayO.description()<<" "<<rayD.description()<<std::endl;
 	Vector N = (dx*dy).unit();
 	double d = -(N^O);
 	double t = -(d+(N^rayO))/(N^rayD);
 	if (!isfinite(t))return false;
 	if (t < 0) {
-		DLOG(WARNING)<<"Plane <"<<name<<">: negative collision. ("<<t<<")"<<std::endl;
 		return false;
 	}
 	collision.belongs = this;
@@ -49,11 +46,9 @@ bool Plane::collideWith(const Vector& rayO,const Vector& rayD,Collision& collisi
 	double r1 = ((collision.C - O)^dx)/dx.sqrlen();
 	double r2 = ((collision.C - O)^dy)/dy.sqrlen();
 	if (border && (r1>1-feps || r2>1-feps || r1<feps || r2<feps) ){
-		DLOG(WARNING)<<"Plane <"<<name<<">: no intersection ("<<r1<<" "<<r2<<")"<<std::endl;
 		return false;
 	}
 	collision.N = collision.face ? N : -N;
 	collision.D = N*(rayD.reverse()^N)*2-rayD.reverse();
-	DLOG(INFO)<<"Plane <"<<name<<">: hitted at "<<collision.description()<<std::endl;
 	return true;
 }

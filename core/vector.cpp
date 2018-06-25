@@ -1,7 +1,7 @@
 #include "vector.h"
 #include <cmath>
-#include "glog/logging.h"
 #include <sstream>
+#include <iostream>
 
 Vector :: Vector() {
 	x = 0 , y = 0, z = 0;
@@ -15,7 +15,7 @@ Vector :: Vector(const Eigen::Vector3d vec) : x(vec(0,0)),y(vec(1,0)),z(vec(2,0)
 
 void Vector :: accept(const Json::Value& val) {
 	if (!val.isMember("x") || !val.isMember("y") || !val.isMember("z"))
-		DLOG(ERROR)<<"The vector not found..."<<std::endl;
+		std::cout<<"The vector not found..."<<std::endl;
 	x = val["x"].asDouble();
 	y = val["y"].asDouble();
 	z = val["z"].asDouble();

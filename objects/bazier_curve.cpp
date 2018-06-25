@@ -2,7 +2,6 @@
 #include <cmath>
 #include <cassert>
 #include <iostream>
-#include "glog/logging.h"
 
 BazierCurve::BazierCurve(int id) : id(id) {
 }
@@ -31,7 +30,7 @@ void BazierCurve::accept(const Json::Value& val) {
 
 Color BazierCurve::getColor(const Vector&)const {
 	if (texture->getType() != TEXTURE_PURE_COLOR)
-		DLOG(FATAL)<<"The getColor of BazierCurve only support PURE_COLOR_MODE"<<std::endl;
+		std::cout<<"The getColor of BazierCurve only support PURE_COLOR_MODE"<<std::endl;
 	return texture->getColor();
 }
 int BazierCurve::cylinderCollision(const Vector& _rayO,const Vector& rayD,double r) {
@@ -164,14 +163,14 @@ bool BazierCurve::collideWith(const Vector& rayO,const Vector& rayD,Collision& c
 	return false;
 }
 
-double BazierCurve::getP(double* p,double t) {
+inline double BazierCurve::getP(double* p,double t) {
 	return 1*p[0]*(1-t)*(1-t)*(1-t) +
 		3*p[1]*t*(1-t)*(1-t) +
 		3*p[2]*t*t*(1-t) +
 		1*p[3]*t*t*t;
 }
 
-double BazierCurve::getdP(double* p,double t) {
+inline double BazierCurve::getdP(double* p,double t) {
 	return -3*p[0]*(1-t)*(1-t) +
 		3*p[1]*(1-t)*(1-t) +
 		-6*p[1]*t*(1-t) +
