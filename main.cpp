@@ -37,7 +37,7 @@ int main(int argc, char** args)
         std::cout<<"Saving..."<<std::endl;
 		PB.save_raw();
         std::cout<<"Saved..."<<std::endl;
-		//PB.display();
+		PB.display();
 		usleep(1000000);
 	}
 

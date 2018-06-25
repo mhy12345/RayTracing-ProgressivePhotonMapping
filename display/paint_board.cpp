@@ -34,7 +34,7 @@ void PaintBoard::display() {
 }
 void PaintBoard::save_raw() { 
     FILE* fout = fopen("result.ppm","w");
-    fprintf(fout,"P3 %d %d\n",sizX,sizY);
+    fprintf(fout,"P3 %d %d\n",sizY,sizX);
     fprintf(fout,"255\n");
     for (int i=0;i<sizX;i++)
     {
