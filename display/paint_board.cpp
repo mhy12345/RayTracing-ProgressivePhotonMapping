@@ -1,4 +1,4 @@
-#include "paintboard.h"
+#include "paint_board.h"
 #include "glog/logging.h"
 #include <iostream>
 using namespace cv;
@@ -32,9 +32,24 @@ void PaintBoard::display() {
 	imshow("picture", *image);
 	waitKey(0);
 }
+void PaintBoard::save_raw() { 
+    FILE* fout = fopen("result.ppm","w");
+    fprintf(fout,"P3 %d %d\n",sizX,sizY);
+    fprintf(fout,"255\n");
+    for (int i=0;i<sizX;i++)
+    {
+        for (int j=0;j<sizY;j++)
+        {
+			Color c = (*board)[i*sizY+j]*255;
+            fprintf(fout,"% 3d % 3d % 3d",int(c.getR()),int(c.getG()),int(c.getB()));
+        }
+        fprintf(fout,"\n");
+    }
+    fclose(fout);
+}
 void PaintBoard::save() {
-	std::vector<int> compression_params;
-	compression_params.push_back(CV_IMWRITE_PNG_COMPRESSION);
-	compression_params.push_back(9); 
-	imwrite("result.bmp", (*image)*255);
+    vector<int>compression_params;
+    compression_params.push_back(IMWRITE_PNG_COMPRESSION);
+    compression_params.push_back(9);
+    imwrite("result.bmp", (*image)*255);
 }

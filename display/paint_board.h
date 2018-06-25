@@ -18,6 +18,7 @@ class PaintBoard {
 		void update();
 		void display();
 		void save();
+		void save_raw();
 };
 
 #endif

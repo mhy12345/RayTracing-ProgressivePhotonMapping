@@ -1,6 +1,6 @@
 #include "render.h"
 #include "glog/logging.h"
-#include "../display/paintboard.h"
+#include "../display/paint_board.h"
 #include <iostream>
 
 Render::Render(){

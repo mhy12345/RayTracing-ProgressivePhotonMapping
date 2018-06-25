@@ -2,6 +2,8 @@
 #include <string.h>
 #include <cxcore.h>
 #include <cv.h>
+#include "opencv2/highgui/highgui_c.h"
+#include "opencv2/core.hpp"
 #include <highgui.h>
 #include <fstream>
 

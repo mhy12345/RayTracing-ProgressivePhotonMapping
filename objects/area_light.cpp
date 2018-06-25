@@ -15,7 +15,7 @@ bool AreaLight :: collideWith(const Vector& rayO, const Vector& rayD,Collision& 
 	Vector N = (dx*dy).unit();
 	double d = -(N^O);
 	double t = -(d+(N^rayO))/(N^rayD);
-	if (!isfinite(t))return false;
+	if (!std::isfinite(t))return false;
 	if (t<feps)return false;
 	collision.belongs = this;
 	collision.dist = t;

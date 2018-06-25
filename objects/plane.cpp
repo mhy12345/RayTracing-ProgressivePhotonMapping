@@ -35,7 +35,7 @@ bool Plane::collideWith(const Vector& rayO,const Vector& rayD,Collision& collisi
 	Vector N = (dx*dy).unit();
 	double d = -(N^O);
 	double t = -(d+(N^rayO))/(N^rayD);
-	if (!isfinite(t))return false;
+	if (!std::isfinite(t))return false;
 	if (t < 0) {
 		return false;
 	}

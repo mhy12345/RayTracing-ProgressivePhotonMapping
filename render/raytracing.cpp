@@ -5,7 +5,6 @@
 #include "../objects/area_light.h"
 #include "../objects/plane.h"
 #include "../objects/bazier_curve.h"
-#include "glog/logging.h"
 #include <iostream>
 
 #ifdef USE_OPENMP
@@ -24,19 +23,15 @@ RayTracing::~RayTracing() {
 
 void RayTracing::accept(const Json::Value& val) {
 	Render::accept(val);
-	DLOG(INFO)<<"RayTracing : "<<val.toStyledString()<<std::endl;
-	DLOG(INFO)<<"RayTracing : Init camera"<<std::endl;
 
 	if (val["camera"]["type"].asString() == "default") {
 		camera = new Camera(rx,ry);
 		camera->accept(val["camera"]);
 	}
 
-	DLOG(INFO)<<"RayTracing : Init objects"<<std::endl;
 	for (int i=0;i<val["objects"].size();i++) {
 		Json::Value v = val["objects"][i];
 		std::string tag = v["type"].asString();
-		DLOG(INFO)<<"RayTracing : "<<tag<<"<"<<v["name"]<<">"<<std::endl;
 		if (tag == "sphere") {
 			objects.push_back(new Sphere());
 			objects.back()->accept(v);
@@ -52,11 +47,9 @@ void RayTracing::accept(const Json::Value& val) {
 			}
 		}else if(tag[0] == '#') {
 		}else {
-			DLOG(ERROR)<<"Strange Object <"<<tag<<std::endl;
 		}
 	}
 
-	DLOG(INFO)<<"RayTracing : Init lights"<<std::endl;
 	for (int i=0;i<val["lights"].size();i++) {
 		Json::Value v = val["lights"][i];
 		std::string tag = v["type"].asString();
@@ -67,7 +60,6 @@ void RayTracing::accept(const Json::Value& val) {
 		}else if (tag[0] == '#') {
 
 		}else {
-			DLOG(ERROR)<<"Strange Object <"<<tag<<">"<<std::endl;
 		}
 	}
 	bg_color.accept(val["bg_color"]);
@@ -76,7 +68,6 @@ void RayTracing::accept(const Json::Value& val) {
 	spec_power = val["spec_power"].asInt();
 	start_rows = val["start_rows"].asInt();
 	bazier_quality = val["bazier_quality"].asInt();
-	DLOG(INFO)<<"RayTracing : Data accepted"<<std::endl;
 	board = new Color[rx*ry];
 	for (int i=0;i<rx*ry;i++)
 		board[i] = Color(1,1,1);
@@ -84,8 +75,6 @@ void RayTracing::accept(const Json::Value& val) {
 
 
 Color RayTracing::calcReflection(const Object& obj, const Collision& obj_coll, int depth, unsigned&hash) {
-	//LOG(INFO)<<"calcReflection... <d="<<depth<<",h="<<hash<<">"<<std::endl;
-	DLOG(INFO)<<"REFLECTION POSITION : "<<obj_coll.description()<<std::endl;
 	if (depth > max_depth) {
 		hash = hash * 17 + 233;
 		return bg_color;
@@ -95,7 +84,6 @@ Color RayTracing::calcReflection(const Object& obj, const Collision& obj_coll, i
 }
 
 Color RayTracing::calcRefraction(const Object& obj, const Collision& obj_coll, int depth, unsigned& hash) {
-	DLOG(INFO)<<"calcRefraction... <d="<<depth<<",h="<<hash<<">"<<std::endl;
 	if (depth > max_depth) {
 		hash = hash * 19 + 233;
 		return bg_color;
@@ -117,9 +105,7 @@ Color RayTracing::calcRefraction(const Object& obj, const Collision& obj_coll, i
 }
 
 Color RayTracing::calcDiffusion(const Object& obj, const Collision& obj_coll) {
-	//LOG(INFO)<<"calcDiffusion..."<<std::endl;
 	Color color = obj.getColor(obj_coll.C);
-	DLOG(INFO)<<"DIFFUSION POSITION : "<<obj_coll.description()<<std::endl;
 	Color ret = color * bg_color *(1-obj.getMaterial().diff-obj.getMaterial().spec);
 	for (auto &lgt : lights) {
 		double shade = lgt->getShade(obj_coll.getSurfaceC(),objects,shade_quality);
@@ -166,7 +152,6 @@ const Light* RayTracing::findCollidedLight(const Vector& _rayO, const Vector& _r
 }
 
 Color RayTracing::rayTrace(const Vector& rayO, const Vector& rayD, int depth, unsigned& hash) {
-	//LOG(INFO)<<"Ray Trace... <d="<<depth<<",h="<<hash<<">"<<std::endl;
 	Collision obj_coll,lgt_coll;
 	const Object* obj = findCollidedObject(rayO,rayD,obj_coll);
 	const Light* lgt = findCollidedLight(rayO,rayD,lgt_coll);
@@ -189,7 +174,6 @@ Color RayTracing::rayTrace(const Vector& rayO, const Vector& rayD, int depth, un
 }
 
 void RayTracing::run() {
-	LOG(INFO)<<"Sampling..."<<std::endl;
 	hash_table = new unsigned*[rx];
 	for (int i=0;i<rx;i++)
 		hash_table[i] = new unsigned[ry];
@@ -205,17 +189,12 @@ void RayTracing::run() {
 #endif
 		printf("Render row #%d\n",i);
 		for (int j=0;j<ry;j++) {
-			LOG(INFO)<<"RENDER POSITION <"<<i<<","<<j<<">"<<std::endl;
 			Vector rayO,rayD;
 			camera->getRay(i,j,rayO,rayD);
-			DLOG(INFO)<<"	RayO = "<<rayO.description()<<std::endl;
-			DLOG(INFO)<<"	RayD = "<<rayD.description()<<std::endl;
 			Color cc = rayTrace(rayO,rayD,0,hash_table[i][j]);
 			board[i*ry+j] = cc;
-			LOG(INFO)<<"Color = "<<cc.description()<<std::endl;
 		}
 	}
-	LOG(INFO)<<"Resampling..."<<std::endl;
 #ifdef USE_OPENMP
 #pragma omp for schedule(dynamic,5)
 #endif

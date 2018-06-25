@@ -1,7 +1,7 @@
 #ifndef RENDER_H
 #define RENDER_H
 #include "json/json.h"
-#include "../display/paintboard.h"
+#include "../display/paint_board.h"
 #include "../core/vector.h"
 #include "../core/light.h"
 #include "../core/object.h"
