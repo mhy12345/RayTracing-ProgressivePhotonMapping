@@ -17,6 +17,8 @@ struct Collision {
 	std::string description()const;
 	void refraction(Vector& resO, Vector& resD)const;
 	void reflection(Vector& resO, Vector& resD)const;
+	void diffusion(Vector& resO, Vector& resD)const;
+	void diffusion_hl(Vector& resO, Vector& resD)const;
 	Vector getSurfaceC()const;
 	Vector getBackfaceC()const;
 };
@@ -50,6 +52,4 @@ class Object {
 		std::string getName()const{return name;}
 		const Texture& getAbsorb()const;
 };
-
-
 #endif

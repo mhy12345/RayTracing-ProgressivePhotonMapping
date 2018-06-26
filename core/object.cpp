@@ -32,6 +32,18 @@ void Collision::reflection(Vector& resO, Vector& resD)const {
 	resO = getSurfaceC();
 }
 
+void Collision::diffusion(Vector& resO, Vector& resD)const {
+	Vector DD = (N*Vector::randomVectorOnSphere()).unit();
+	assert(DD.isUnit());
+	double phi = acos(rand()*1.0/RAND_MAX);
+	resO = getSurfaceC();
+	resD = DD*sin(phi) + N*cos(phi);
+	assert(resD.isUnit());
+}
+
+void Collision::diffusion_hl(Vector& resO, Vector& resD)const {
+}
+
 Vector Collision::getSurfaceC()const {
 	return C+N*(feps*2);
 }

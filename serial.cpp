@@ -17,14 +17,15 @@ int main(int argc, char** args)
 	JSONCPP_STRING errs;
 	Json::parseFromStream(reader, ifs, &root, &errs);
 
-	Render* PPM = new RayTracing();
+	//Render* PPM = new RayTracing();
+	Render* PPM = new ProgressivePhotonMapping();
 	PaintBoard PB;
 	PPM->accept(root);
 	PPM->registerPaintBoard(&PB);
 
 	PPM->run();
 	std::cout<<"HAHA"<<std::endl;
-	//PB.update();
+	PB.update();
 	PB.save();
 	//PB.display();
 }

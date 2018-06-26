@@ -2,11 +2,7 @@
 #define RENDER_H
 #include "json/json.h"
 #include "../display/paint_board.h"
-#include "../core/vector.h"
-#include "../core/light.h"
-#include "../core/object.h"
 #include "../core/color.h"
-#include "../core/camera.h"
 
 class Render {
 	protected:

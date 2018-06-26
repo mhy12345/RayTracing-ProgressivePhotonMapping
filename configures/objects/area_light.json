@@ -1,0 +1,11 @@
+{
+	"type":"area_light",
+	"name":"light1",
+	"brightness":10,
+	"position":{"x":40,"y":-10,"z":33},
+	"dx" : {"x":0,"y":20,"z":0},
+	"dy" : {"x":0,"y":0,"z":-9},
+	"texture": {"type":"pure","r":1,"g":1,"b":1},
+	"material":{"refl":0,"diff":0,"spec":0,"refr":0.0,"refr_k":1.0},
+	"diff_angle":0.314
+}

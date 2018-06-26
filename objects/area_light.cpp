@@ -8,6 +8,7 @@ void AreaLight :: accept(const Json::Value& val) {
 	O.accept(val["position"]);
 	dx.accept(val["dx"]);
 	dy.accept(val["dy"]);
+	diff_angle = val["diff_angle"].asDouble();
 }
 
 bool AreaLight :: collideWith(const Vector& rayO, const Vector& rayD,Collision& collision) {
@@ -62,4 +63,16 @@ double AreaLight::getShade(const Vector& _rayO,std::vector<Object*> olist, int s
 	double shade = success_count / (9.0*shade_quality);
 	//if (success_count)shade = 1;
 	return shade;
+}
+void AreaLight::randomlyEmit(Vector& rayO,Vector& rayD)const{
+	double x = rand()*1.0/RAND_MAX;
+	double y = rand()*1.0/RAND_MAX;
+	rayO = O+x*dx+y*dy;
+	rayD = (dx*dy).unit();
+	double offset_r =diff_angle*(rand()*1.0/RAND_MAX);
+	double offset_phi = rand()*1.0/RAND_MAX*M_PI*2;
+	static std::default_random_engine generator;
+	std::normal_distribution<double> distribution(offset_phi, offset_phi);
+	offset_phi = distribution(generator);
+	rayD = (rayD + dx.unit()*offset_r*sin(offset_phi) + dy.unit()*offset_r*cos(offset_phi)).unit();
 }

@@ -2,6 +2,7 @@
 #include "../core/object.h"
 #include "../objects/sphere.h"
 #include "../objects/area_light.h"
+#include "../objects/point_light.h"
 #include "../objects/plane.h"
 #include "../objects/bazier_curve.h"
 
@@ -29,7 +30,7 @@ void Scene::accept(const Json::Value& val,int _rx,int _ry) {
 		}else if (tag == "plane") {
 			objects.push_back(new Plane());
 			objects.back()->accept(v);
-		} else if (tag == "bazier_curves") {
+		}else if (tag == "bazier_curves") {
 			int n = v["ctrl_pts"].size();
 			for (int i=0;i<n;i++) {
 				//if (i!=0 && i!=5)continue;
@@ -47,6 +48,9 @@ void Scene::accept(const Json::Value& val,int _rx,int _ry) {
 
 		if (tag == "area_light") {
 			lights.push_back(new AreaLight());
+			lights.back()->accept(v);
+		}else if (tag == "point_light") {
+			lights.push_back(new PointLight());
 			lights.back()->accept(v);
 		}else if (tag[0] == '#') {
 

@@ -1,0 +1,30 @@
+{
+	"rx" : 512,
+	"ry" : 1024,
+	"_rx" : 120,
+	"_ry" : 240,
+	"_rx" : 5,
+	"_ry" : 10,
+	"photon_num" : 10000,
+	"total_round":40,
+	"total_brightness":500.0,
+	"round_decay" : 0.8,
+	"initial_r" : 5,
+	"r_decay" : 0.8,
+	"camera": 
+	{
+		"type":"default",
+		"position" : {"x":20,"y":-10,"z":0 },
+		"dx" : {"x":-10,"y":0,"z":0},
+		"dy" : {"x":0,"y":20,"z":0},
+		"origin" : {"x":40,"y":0,"z":-50}
+	},
+	"lights" : [ 
+	],
+	"objects" : [ 
+	],
+	"bg_color" : {"type":"pure","r":0,"g":0,"b":0},
+	"max_depth" : 4,
+	"max_jump" : 20,
+	"start_rows" : 0
+}

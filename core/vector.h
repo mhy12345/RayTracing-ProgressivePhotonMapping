@@ -28,6 +28,8 @@ class Vector
 		friend Vector operator * (const Vector &a,double k);
 		friend bool operator == (const Vector &a,const Vector &b);
 		friend Vector operator /(const Vector& a,double k);
+		friend Vector each_min(const Vector& v1,const Vector& v2);
+		friend Vector each_max(const Vector& v1,const Vector& v2);
 		Vector unit()const;
 		Vector reverse()const;
 		double len()const;
@@ -35,5 +37,6 @@ class Vector
 		bool isUnit()const;
 		std::string description()const;
 		Eigen::Vector3d eigen()const;
+		static Vector randomVectorOnSphere();
 };
 #endif

@@ -1,15 +1,13 @@
-#ifndef AREA_LIGHT_H
-#define AREA_LIGHT_H
+#ifndef POINT_LIGHT_H
+#define POINT_LIGHT_H
 
 #include "../core/light.h"
 
-class AreaLight : public Light {
+class PointLight : public Light {
 	private:
 		Vector O;
-		Vector dx,dy;
-		double diff_angle;
 	public:
-		AreaLight(){}
+		PointLight(){}
 		void accept(const Json::Value& val);
 		bool collideWith(const Vector& rayO, const Vector& rayD, Collision& collision);
 		Vector getCenter()const;

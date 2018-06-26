@@ -1,0 +1,15 @@
+{
+	"type":"plane",
+	"name":"floor",
+	"position":{"x":0,"y":-10,"z":25},
+	"dx":{"x":0,"y":0,"z":30},
+	"dy":{"x":0,"y":20,"z":0},
+	"texture":{
+		"type":"picture",
+		"filename":"materials/floor3.jpg",
+		"rx":8,
+		"ry":8
+	},
+	"material":{"refl":0.4,"diff":0.6,"spec":0.0,"refr":0.0,"refr_k":1.0},
+	"border":false
+}

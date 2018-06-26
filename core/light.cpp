@@ -7,6 +7,7 @@ Light::~Light() {
 }
 
 void Light::accept(const Json::Value& val) {
+	brightness = val["brightness"].asDouble();
 	Object::accept(val);
 }
 Color Light::getColor(const Vector&)const {

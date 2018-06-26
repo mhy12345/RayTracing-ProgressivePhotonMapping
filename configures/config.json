@@ -1,83 +1,887 @@
 {
-	"rx" : 512,
-	"ry" : 1024,
-	"_rx" : 120,
-	"_ry" : 240,
-	"_rx" : 5,
-	"_ry" : 10,
-	"camera": 
-	{
-		"type":"default",
-		"position" : {"x":20,"y":-10,"z":0 },
-		"dx" : {"x":-10,"y":0,"z":0},
-		"dy" : {"x":0,"y":20,"z":0},
-		"origin" : {"x":40,"y":0,"z":-50}
-	},
-	"lights" : [ 
-		{
-			"type":"area_light",
-			"name":"light1",
-			"position":{"x":40,"y":-30,"z":10},
-			"dx" : {"x":0,"y":0,"z":-20},
-			"dy" : {"x":0,"y":20,"z":0},
-			"texture": {"type":"pure","r":1,"g":1,"b":1},
-			"material":{"refl":0,"diff":0,"spec":0,"refr":0.0,"refr_k":1.0}
-		}
-	],
-	"objects" : [ 
-		{
-			"type":"#bazier_curves",
-			"name":"cup",
-			"position":{"x":0,"y":0,"z":30},
-			"ctrl_pts": 
-			[[[0.0, 1.1, 1.2, 2.0], [0.04, 0.04, -0.0, -0.0]], [[2.0, 2.2, 2.0, 1.9], [-0.0, -0.0, 0.1, 0.15]], [[1.9, 1.73, 0.4, 0.2], [0.15, 0.23, -0.2, 0.4]], [[0.2, -0.1, 3.8, 3.8], [0.4, 1.3, 1.4, 2.0]], [[3.8,3.8, 3.6, 3.6], [2.0, 2.2, 2.2, 2.0]], [[3.6, 3.6, 0.25, 0.0], [2.0, 1.9, 1.3, 1.3]]],
-			"texture": {"type":"pure","r":0.7,"g":0.7,"b":0.3},
-			"absorb": {"type":"pure","r":0.1,"g":0.1,"b":0.5},
-			"material":{"refl":0.5,"diff":0.5,"spec":1.0,"refr":0.5,"refr_k":1.3}
-		},
-		{
-			"type":"sphere",
-			"name":"ball",
-			"center":{"x":1,"y":-2,"z":35},
-			"radius":1,
-			"texture": {"type":"pure","r":0.7,"g":0,"b":0.7},
-			"absorb": {"type":"pure","r":0.5,"g":0.7,"b":0.5},
-			"material":{"refl":0.4,"diff":0.0,"spec":0.6,"refr":0.9,"refr_k":1.3}
-		}, 
-		{
-			"type":"sphere",
-			"name":"marble",
-			"center":{"x":3,"y":8,"z":35},
-			"radius":3,
-			"texture":{
-				"type":"picture",
-				"filename":"materials/marble.bmp",
-				"rx":2,
-				"ry":3.14
-			},
-			"absorb": {"type":"pure","r":0.2,"g":0.7,"b":0.2},
-			"material":{"refl":0.0,"diff":1.0,"spec":0.6,"refr":0.0,"refr_k":1.0}
-		}, 
-		{
-			"type":"plane",
-			"name":"floor",
-			"position":{"x":0,"y":-10,"z":25},
-			"dx":{"x":0,"y":0,"z":30},
-			"dy":{"x":0,"y":20,"z":0},
-			"texture":{
-				"type":"picture",
-				"filename":"materials/floor2.jpg",
-				"rx":8,
-				"ry":8
-			},
-			"material":{"refl":0.4,"diff":0.6,"spec":0.0,"refr":0.0,"refr_k":1.0},
-			"border":false
-		}
-	],
-	"bg_color" : {"type":"pure","r":0,"g":0,"b":0},
-	"shade_quality" : 50,
-	"spec_power": 20,
-	"max_depth" : 4,
-	"bazier_quality" : 30,
-	"start_rows" : 0
+ "rx": 512,
+ "ry": 1024,
+ "_rx": 5,
+ "_ry": 10,
+ "photon_num": 10000,
+ "total_round": 40,
+ "total_brightness": 500.0,
+ "round_decay": 0.8,
+ "initial_r": 5,
+ "r_decay": 0.8,
+ "camera": {
+  "type": "default",
+  "position": {
+   "x": 20,
+   "y": -10,
+   "z": 0
+  },
+  "dx": {
+   "x": -10,
+   "y": 0,
+   "z": 0
+  },
+  "dy": {
+   "x": 0,
+   "y": 20,
+   "z": 0
+  },
+  "origin": {
+   "x": 40,
+   "y": 0,
+   "z": -50
+  }
+ },
+ "lights": [
+  {
+   "type": "point_light",
+   "name": "light1",
+   "brightness": 10,
+   "position": {
+    "x": 8,
+    "y": 0,
+    "z": 27
+   },
+   "texture": {
+    "type": "pure",
+    "r": 1,
+    "g": 1,
+    "b": 1
+   },
+   "material": {
+    "refl": 0,
+    "diff": 0,
+    "spec": 0,
+    "refr": 0.0,
+    "refr_k": 1.0
+   }
+  }
+ ],
+ "objects": [
+  {
+   "type": "sphere",
+   "name": "ball_0_-1_-1",
+   "center": {
+    "x": 0.5,
+    "y": 0.21880014540340853,
+    "z": 19.180048493968123
+   },
+   "radius": 1,
+   "texture": {
+    "type": "pure",
+    "r": 0.7,
+    "g": 0,
+    "b": 0.7
+   },
+   "absorb": {
+    "type": "pure",
+    "r": 0.0,
+    "g": -0.5,
+    "b": 0.0
+   },
+   "material": {
+    "refl": 0.0,
+    "diff": 0.0,
+    "spec": 0.6,
+    "refr": 0.9,
+    "refr_k": 1.3
+   }
+  },
+  {
+   "type": "sphere",
+   "name": "ball_0_-1_0",
+   "center": {
+    "x": 0.5,
+    "y": -1.3005756803142339,
+    "z": 20.480624174282358
+   },
+   "radius": 1,
+   "texture": {
+    "type": "pure",
+    "r": 0.7,
+    "g": 0,
+    "b": 0.7
+   },
+   "absorb": {
+    "type": "pure",
+    "r": 0.0,
+    "g": 0.0,
+    "b": 0.5
+   },
+   "material": {
+    "refl": 0.0,
+    "diff": 0.0,
+    "spec": 0.6,
+    "refr": 0.9,
+    "refr_k": 1.3
+   }
+  },
+  {
+   "type": "sphere",
+   "name": "ball_0_-1_1",
+   "center": {
+    "x": 0.5,
+    "y": -2.8199515060318765,
+    "z": 21.78119985459659
+   },
+   "radius": 1,
+   "texture": {
+    "type": "pure",
+    "r": 0.7,
+    "g": 0,
+    "b": 0.7
+   },
+   "absorb": {
+    "type": "pure",
+    "r": 0.0,
+    "g": 0.5,
+    "b": 1.0
+   },
+   "material": {
+    "refl": 0.0,
+    "diff": 0.0,
+    "spec": 0.6,
+    "refr": 0.9,
+    "refr_k": 1.3
+   }
+  },
+  {
+   "type": "sphere",
+   "name": "ball_0_0_-1",
+   "center": {
+    "x": 0.5,
+    "y": 1.5193758257176424,
+    "z": 20.699424319685765
+   },
+   "radius": 1,
+   "texture": {
+    "type": "pure",
+    "r": 0.7,
+    "g": 0,
+    "b": 0.7
+   },
+   "absorb": {
+    "type": "pure",
+    "r": 0.5,
+    "g": 0.0,
+    "b": 0.0
+   },
+   "material": {
+    "refl": 0.0,
+    "diff": 0.0,
+    "spec": 0.6,
+    "refr": 0.9,
+    "refr_k": 1.3
+   }
+  },
+  {
+   "type": "sphere",
+   "name": "ball_0_0_0",
+   "center": {
+    "x": 0.5,
+    "y": 0.0,
+    "z": 22.0
+   },
+   "radius": 1,
+   "texture": {
+    "type": "pure",
+    "r": 0.7,
+    "g": 0,
+    "b": 0.7
+   },
+   "absorb": {
+    "type": "pure",
+    "r": 0.5,
+    "g": 0.5,
+    "b": 0.5
+   },
+   "material": {
+    "refl": 0.0,
+    "diff": 0.0,
+    "spec": 0.6,
+    "refr": 0.9,
+    "refr_k": 1.3
+   }
+  },
+  {
+   "type": "sphere",
+   "name": "ball_0_0_1",
+   "center": {
+    "x": 0.5,
+    "y": -1.5193758257176424,
+    "z": 23.300575680314235
+   },
+   "radius": 1,
+   "texture": {
+    "type": "pure",
+    "r": 0.7,
+    "g": 0,
+    "b": 0.7
+   },
+   "absorb": {
+    "type": "pure",
+    "r": 0.5,
+    "g": 1.0,
+    "b": 1.0
+   },
+   "material": {
+    "refl": 0.0,
+    "diff": 0.0,
+    "spec": 0.6,
+    "refr": 0.9,
+    "refr_k": 1.3
+   }
+  },
+  {
+   "type": "sphere",
+   "name": "ball_0_1_-1",
+   "center": {
+    "x": 0.5,
+    "y": 2.8199515060318765,
+    "z": 22.21880014540341
+   },
+   "radius": 1,
+   "texture": {
+    "type": "pure",
+    "r": 0.7,
+    "g": 0,
+    "b": 0.7
+   },
+   "absorb": {
+    "type": "pure",
+    "r": 1.0,
+    "g": 0.5,
+    "b": 0.0
+   },
+   "material": {
+    "refl": 0.0,
+    "diff": 0.0,
+    "spec": 0.6,
+    "refr": 0.9,
+    "refr_k": 1.3
+   }
+  },
+  {
+   "type": "sphere",
+   "name": "ball_0_1_0",
+   "center": {
+    "x": 0.5,
+    "y": 1.3005756803142339,
+    "z": 23.519375825717642
+   },
+   "radius": 1,
+   "texture": {
+    "type": "pure",
+    "r": 0.7,
+    "g": 0,
+    "b": 0.7
+   },
+   "absorb": {
+    "type": "pure",
+    "r": 1.0,
+    "g": 1.0,
+    "b": 0.5
+   },
+   "material": {
+    "refl": 0.0,
+    "diff": 0.0,
+    "spec": 0.6,
+    "refr": 0.9,
+    "refr_k": 1.3
+   }
+  },
+  {
+   "type": "sphere",
+   "name": "ball_0_1_1",
+   "center": {
+    "x": 0.5,
+    "y": -0.21880014540340853,
+    "z": 24.819951506031877
+   },
+   "radius": 1,
+   "texture": {
+    "type": "pure",
+    "r": 0.7,
+    "g": 0,
+    "b": 0.7
+   },
+   "absorb": {
+    "type": "pure",
+    "r": 1.0,
+    "g": 1.5,
+    "b": 1.0
+   },
+   "material": {
+    "refl": 0.0,
+    "diff": 0.0,
+    "spec": 0.6,
+    "refr": 0.9,
+    "refr_k": 1.3
+   }
+  },
+  {
+   "type": "sphere",
+   "name": "ball_1_-1_-1",
+   "center": {
+    "x": 2.5,
+    "y": 0.21880014540340853,
+    "z": 19.180048493968123
+   },
+   "radius": 1,
+   "texture": {
+    "type": "pure",
+    "r": 0.7,
+    "g": 0,
+    "b": 0.7
+   },
+   "absorb": {
+    "type": "pure",
+    "r": 0.5,
+    "g": -0.5,
+    "b": 0.5
+   },
+   "material": {
+    "refl": 0.0,
+    "diff": 0.0,
+    "spec": 0.6,
+    "refr": 0.9,
+    "refr_k": 1.3
+   }
+  },
+  {
+   "type": "sphere",
+   "name": "ball_1_-1_0",
+   "center": {
+    "x": 2.5,
+    "y": -1.3005756803142339,
+    "z": 20.480624174282358
+   },
+   "radius": 1,
+   "texture": {
+    "type": "pure",
+    "r": 0.7,
+    "g": 0,
+    "b": 0.7
+   },
+   "absorb": {
+    "type": "pure",
+    "r": 0.5,
+    "g": 0.0,
+    "b": 1.0
+   },
+   "material": {
+    "refl": 0.0,
+    "diff": 0.0,
+    "spec": 0.6,
+    "refr": 0.9,
+    "refr_k": 1.3
+   }
+  },
+  {
+   "type": "sphere",
+   "name": "ball_1_-1_1",
+   "center": {
+    "x": 2.5,
+    "y": -2.8199515060318765,
+    "z": 21.78119985459659
+   },
+   "radius": 1,
+   "texture": {
+    "type": "pure",
+    "r": 0.7,
+    "g": 0,
+    "b": 0.7
+   },
+   "absorb": {
+    "type": "pure",
+    "r": 0.5,
+    "g": 0.5,
+    "b": 1.5
+   },
+   "material": {
+    "refl": 0.0,
+    "diff": 0.0,
+    "spec": 0.6,
+    "refr": 0.9,
+    "refr_k": 1.3
+   }
+  },
+  {
+   "type": "sphere",
+   "name": "ball_1_0_-1",
+   "center": {
+    "x": 2.5,
+    "y": 1.5193758257176424,
+    "z": 20.699424319685765
+   },
+   "radius": 1,
+   "texture": {
+    "type": "pure",
+    "r": 0.7,
+    "g": 0,
+    "b": 0.7
+   },
+   "absorb": {
+    "type": "pure",
+    "r": 1.0,
+    "g": 0.0,
+    "b": 0.5
+   },
+   "material": {
+    "refl": 0.0,
+    "diff": 0.0,
+    "spec": 0.6,
+    "refr": 0.9,
+    "refr_k": 1.3
+   }
+  },
+  {
+   "type": "sphere",
+   "name": "ball_1_0_0",
+   "center": {
+    "x": 2.5,
+    "y": 0.0,
+    "z": 22.0
+   },
+   "radius": 1,
+   "texture": {
+    "type": "pure",
+    "r": 0.7,
+    "g": 0,
+    "b": 0.7
+   },
+   "absorb": {
+    "type": "pure",
+    "r": 1.0,
+    "g": 0.5,
+    "b": 1.0
+   },
+   "material": {
+    "refl": 0.0,
+    "diff": 0.0,
+    "spec": 0.6,
+    "refr": 0.9,
+    "refr_k": 1.3
+   }
+  },
+  {
+   "type": "sphere",
+   "name": "ball_1_0_1",
+   "center": {
+    "x": 2.5,
+    "y": -1.5193758257176424,
+    "z": 23.300575680314235
+   },
+   "radius": 1,
+   "texture": {
+    "type": "pure",
+    "r": 0.7,
+    "g": 0,
+    "b": 0.7
+   },
+   "absorb": {
+    "type": "pure",
+    "r": 1.0,
+    "g": 1.0,
+    "b": 1.5
+   },
+   "material": {
+    "refl": 0.0,
+    "diff": 0.0,
+    "spec": 0.6,
+    "refr": 0.9,
+    "refr_k": 1.3
+   }
+  },
+  {
+   "type": "sphere",
+   "name": "ball_1_1_-1",
+   "center": {
+    "x": 2.5,
+    "y": 2.8199515060318765,
+    "z": 22.21880014540341
+   },
+   "radius": 1,
+   "texture": {
+    "type": "pure",
+    "r": 0.7,
+    "g": 0,
+    "b": 0.7
+   },
+   "absorb": {
+    "type": "pure",
+    "r": 1.5,
+    "g": 0.5,
+    "b": 0.5
+   },
+   "material": {
+    "refl": 0.0,
+    "diff": 0.0,
+    "spec": 0.6,
+    "refr": 0.9,
+    "refr_k": 1.3
+   }
+  },
+  {
+   "type": "sphere",
+   "name": "ball_1_1_0",
+   "center": {
+    "x": 2.5,
+    "y": 1.3005756803142339,
+    "z": 23.519375825717642
+   },
+   "radius": 1,
+   "texture": {
+    "type": "pure",
+    "r": 0.7,
+    "g": 0,
+    "b": 0.7
+   },
+   "absorb": {
+    "type": "pure",
+    "r": 1.5,
+    "g": 1.0,
+    "b": 1.0
+   },
+   "material": {
+    "refl": 0.0,
+    "diff": 0.0,
+    "spec": 0.6,
+    "refr": 0.9,
+    "refr_k": 1.3
+   }
+  },
+  {
+   "type": "sphere",
+   "name": "ball_1_1_1",
+   "center": {
+    "x": 2.5,
+    "y": -0.21880014540340853,
+    "z": 24.819951506031877
+   },
+   "radius": 1,
+   "texture": {
+    "type": "pure",
+    "r": 0.7,
+    "g": 0,
+    "b": 0.7
+   },
+   "absorb": {
+    "type": "pure",
+    "r": 1.5,
+    "g": 1.5,
+    "b": 1.5
+   },
+   "material": {
+    "refl": 0.0,
+    "diff": 0.0,
+    "spec": 0.6,
+    "refr": 0.9,
+    "refr_k": 1.3
+   }
+  },
+  {
+   "type": "sphere",
+   "name": "ball_2_-1_-1",
+   "center": {
+    "x": 4.5,
+    "y": 0.21880014540340853,
+    "z": 19.180048493968123
+   },
+   "radius": 1,
+   "texture": {
+    "type": "pure",
+    "r": 0.7,
+    "g": 0,
+    "b": 0.7
+   },
+   "absorb": {
+    "type": "pure",
+    "r": 1.0,
+    "g": -0.5,
+    "b": 1.0
+   },
+   "material": {
+    "refl": 0.0,
+    "diff": 0.0,
+    "spec": 0.6,
+    "refr": 0.9,
+    "refr_k": 1.3
+   }
+  },
+  {
+   "type": "sphere",
+   "name": "ball_2_-1_0",
+   "center": {
+    "x": 4.5,
+    "y": -1.3005756803142339,
+    "z": 20.480624174282358
+   },
+   "radius": 1,
+   "texture": {
+    "type": "pure",
+    "r": 0.7,
+    "g": 0,
+    "b": 0.7
+   },
+   "absorb": {
+    "type": "pure",
+    "r": 1.0,
+    "g": 0.0,
+    "b": 1.5
+   },
+   "material": {
+    "refl": 0.0,
+    "diff": 0.0,
+    "spec": 0.6,
+    "refr": 0.9,
+    "refr_k": 1.3
+   }
+  },
+  {
+   "type": "sphere",
+   "name": "ball_2_-1_1",
+   "center": {
+    "x": 4.5,
+    "y": -2.8199515060318765,
+    "z": 21.78119985459659
+   },
+   "radius": 1,
+   "texture": {
+    "type": "pure",
+    "r": 0.7,
+    "g": 0,
+    "b": 0.7
+   },
+   "absorb": {
+    "type": "pure",
+    "r": 1.0,
+    "g": 0.5,
+    "b": 2.0
+   },
+   "material": {
+    "refl": 0.0,
+    "diff": 0.0,
+    "spec": 0.6,
+    "refr": 0.9,
+    "refr_k": 1.3
+   }
+  },
+  {
+   "type": "sphere",
+   "name": "ball_2_0_-1",
+   "center": {
+    "x": 4.5,
+    "y": 1.5193758257176424,
+    "z": 20.699424319685765
+   },
+   "radius": 1,
+   "texture": {
+    "type": "pure",
+    "r": 0.7,
+    "g": 0,
+    "b": 0.7
+   },
+   "absorb": {
+    "type": "pure",
+    "r": 1.5,
+    "g": 0.0,
+    "b": 1.0
+   },
+   "material": {
+    "refl": 0.0,
+    "diff": 0.0,
+    "spec": 0.6,
+    "refr": 0.9,
+    "refr_k": 1.3
+   }
+  },
+  {
+   "type": "sphere",
+   "name": "ball_2_0_0",
+   "center": {
+    "x": 4.5,
+    "y": 0.0,
+    "z": 22.0
+   },
+   "radius": 1,
+   "texture": {
+    "type": "pure",
+    "r": 0.7,
+    "g": 0,
+    "b": 0.7
+   },
+   "absorb": {
+    "type": "pure",
+    "r": 1.5,
+    "g": 0.5,
+    "b": 1.5
+   },
+   "material": {
+    "refl": 0.0,
+    "diff": 0.0,
+    "spec": 0.6,
+    "refr": 0.9,
+    "refr_k": 1.3
+   }
+  },
+  {
+   "type": "sphere",
+   "name": "ball_2_0_1",
+   "center": {
+    "x": 4.5,
+    "y": -1.5193758257176424,
+    "z": 23.300575680314235
+   },
+   "radius": 1,
+   "texture": {
+    "type": "pure",
+    "r": 0.7,
+    "g": 0,
+    "b": 0.7
+   },
+   "absorb": {
+    "type": "pure",
+    "r": 1.5,
+    "g": 1.0,
+    "b": 2.0
+   },
+   "material": {
+    "refl": 0.0,
+    "diff": 0.0,
+    "spec": 0.6,
+    "refr": 0.9,
+    "refr_k": 1.3
+   }
+  },
+  {
+   "type": "sphere",
+   "name": "ball_2_1_-1",
+   "center": {
+    "x": 4.5,
+    "y": 2.8199515060318765,
+    "z": 22.21880014540341
+   },
+   "radius": 1,
+   "texture": {
+    "type": "pure",
+    "r": 0.7,
+    "g": 0,
+    "b": 0.7
+   },
+   "absorb": {
+    "type": "pure",
+    "r": 2.0,
+    "g": 0.5,
+    "b": 1.0
+   },
+   "material": {
+    "refl": 0.0,
+    "diff": 0.0,
+    "spec": 0.6,
+    "refr": 0.9,
+    "refr_k": 1.3
+   }
+  },
+  {
+   "type": "sphere",
+   "name": "ball_2_1_0",
+   "center": {
+    "x": 4.5,
+    "y": 1.3005756803142339,
+    "z": 23.519375825717642
+   },
+   "radius": 1,
+   "texture": {
+    "type": "pure",
+    "r": 0.7,
+    "g": 0,
+    "b": 0.7
+   },
+   "absorb": {
+    "type": "pure",
+    "r": 2.0,
+    "g": 1.0,
+    "b": 1.5
+   },
+   "material": {
+    "refl": 0.0,
+    "diff": 0.0,
+    "spec": 0.6,
+    "refr": 0.9,
+    "refr_k": 1.3
+   }
+  },
+  {
+   "type": "sphere",
+   "name": "ball_2_1_1",
+   "center": {
+    "x": 4.5,
+    "y": -0.21880014540340853,
+    "z": 24.819951506031877
+   },
+   "radius": 1,
+   "texture": {
+    "type": "pure",
+    "r": 0.7,
+    "g": 0,
+    "b": 0.7
+   },
+   "absorb": {
+    "type": "pure",
+    "r": 2.0,
+    "g": 1.5,
+    "b": 2.0
+   },
+   "material": {
+    "refl": 0.0,
+    "diff": 0.0,
+    "spec": 0.6,
+    "refr": 0.9,
+    "refr_k": 1.3
+   }
+  },
+  {
+   "type": "plane",
+   "name": "floor",
+   "position": {
+    "x": 0,
+    "y": -10,
+    "z": 25
+   },
+   "dx": {
+    "x": 0,
+    "y": 0,
+    "z": 30
+   },
+   "dy": {
+    "x": 0,
+    "y": 20,
+    "z": 0
+   },
+   "texture": {
+    "type": "picture",
+    "filename": "materials/floor3.jpg",
+    "rx": 8,
+    "ry": 8
+   },
+   "material": {
+    "refl": 0.4,
+    "diff": 0.6,
+    "spec": 0.0,
+    "refr": 0.0,
+    "refr_k": 1.0
+   },
+   "border": false
+  }
+ ],
+ "bg_color": {
+  "type": "pure",
+  "r": 0,
+  "g": 0,
+  "b": 0
+ },
+ "max_depth": 4,
+ "max_jump": 20,
+ "start_rows": 0
 }

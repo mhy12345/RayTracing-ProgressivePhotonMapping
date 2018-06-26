@@ -25,8 +25,8 @@ int main(int argc, char** args)
 	JSONCPP_STRING errs;
 	Json::parseFromStream(reader, ifs, &root, &errs);
 
-	//Render *PPM = new ProgressivePhotonMapping();
-	Render *PPM = new RayTracing();
+	Render *PPM = new ProgressivePhotonMapping();
+	//Render *PPM = new RayTracing();
 	PaintBoard PB;
 	PPM->accept(root);
 	PPM->registerPaintBoard(&PB);

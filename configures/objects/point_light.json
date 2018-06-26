@@ -1,0 +1,8 @@
+{
+	"type":"point_light",
+	"name":"light1",
+	"brightness":10,
+	"position":{"x":8,"y":0,"z":27},
+	"texture": {"type":"pure","r":1,"g":1,"b":1},
+	"material":{"refl":0,"diff":0,"spec":0,"refr":0.0,"refr_k":1.0}
+}
