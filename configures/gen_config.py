@@ -14,6 +14,7 @@ _area_light = loadObject('area_light')
 _sphere = loadObject('sphere')
 _floor = loadObject('floor')
 _point_light = loadObject('point_light')
+_marble_ball = loadObject('marble_ball')
 
 def getPosition(x,y,z):
     return {'x':x,'y':y,'z':z}
@@ -38,6 +39,7 @@ back_light['name'] = 'back_light'
 back_light['position'] = getPosition(3,-1,35)
 back_light['dx'] = getPosition(0,6,0)
 back_light['dy'] = getPosition(2,0,-0.5)
+
 
 def scene1():
     #cfg['lights'].append(_area_light)
@@ -66,13 +68,16 @@ def scene2():
                 sphere = copy.deepcopy(_sphere)
                 sphere['name'] = 'ball_%d_%d_%d'%(i,j,k)
                 sphere['radius'] = 1
-                sphere['center']['x'] = 2*i + .5
+                sphere['center']['x'] = 2*i + 1.5
                 sphere['center']['y'] = 2*j*sin(15)+2*k*cos(15)
                 sphere['center']['z'] = 2*k*sin(15)-2*j*cos(15)+22
-                sphere['absorb']['r'] = (i+j)/2+.5
-                sphere['absorb']['g'] = (j+k)/2+.5
-                sphere['absorb']['b'] = (k+i)/2+.5
+                sphere['absorb']['r'] = random.random()
+                sphere['absorb']['g'] = random.random()
+                sphere['absorb']['b'] = random.random()
+                if (i == 1 and j==0 and k ==0):
+                    sphere['absorb'] = getColor(0,0,0)
                 cfg['objects'].append(sphere)
+    cfg['objects'].append(_marble_ball)
     cfg['objects'].append(_floor)
 
 scene2()

@@ -20,6 +20,7 @@ void ProgressivePhotonMapping::accept(const Json::Value& val) {
 	Scene::accept(val,rx,ry);
 	max_depth = val["max_depth"].asInt();
 	start_rows = val["start_rows"].asInt();
+	start_cols = val["start_cols"].asInt();
 	bazier_quality = val["bazier_quality"].asInt();
 	total_round = val["total_round"].asInt();
 	photon_num = val["photon_num"].asInt();
@@ -41,6 +42,7 @@ void ProgressivePhotonMapping::run() {
 
 	double current_r = initial_r;
 	double energy = 1.0 / log(total_round);
+	double current_e = energy;
 
 	for (int iter = 0; iter < total_round; iter++) {
 		for (int i=0;i<rx*ry;i++)
@@ -49,16 +51,18 @@ void ProgressivePhotonMapping::run() {
 		std::cout<<"View Point generate..."<<std::endl;
 		std::cout<<"Current R = "<<current_r<<std::endl;
 		view_pts.clear();
+#ifdef USE_OPENMP
 #pragma omp parallel num_threads(8)
 #pragma omp for
-		for (int i=0;i<rx;i++)
-			for (int j=0;j<ry;j++) {
+#endif
+		for (int i=start_rows;i<rx;i++)
+			for (int j=start_cols;j<ry;j++) {
 				double _i = i + (rand()*1.0/RAND_MAX-.5);
 				double _j = j + (rand()*1.0/RAND_MAX-.5);
 				Vector rayO;
 				Vector rayD;
 				camera->getRay(_i,_j,rayO,rayD);
-				RayTracing(rayO,rayD,Color(1,1,1),i,j,0,energy,0);
+				RayTracing(rayO,rayD,Color(1,1,1),i,j,0,current_e,0);
 				samples_count[i*ry+j] ++;
 			}
 		std::cout<<"Build KDTree..."<<std::endl;
@@ -69,7 +73,9 @@ void ProgressivePhotonMapping::run() {
 			brightness += lgt->getBrightness();
 		for (auto &lgt : lights) {
 			int lgt_emit_count = photon_num*lgt->getBrightness()/brightness;
+#ifdef USE_OPENMP
 #pragma omp for
+#endif
 			for (int i=0;i<lgt_emit_count;i++) {
 				Vector rayO,rayD;
 				lgt->randomlyEmit(rayO,rayD);
@@ -82,6 +88,7 @@ void ProgressivePhotonMapping::run() {
 			for (int j=0;j<ry;j++)
 				board[i*ry+j] += bg_pic[i*ry+j]*(1.0/samples_count[i*ry+j]);
 		current_r *= round_decay;
+		//current_e += 4;
 	}
 }
 
@@ -124,12 +131,12 @@ void ProgressivePhotonMapping::photonTracing(const Vector& rayO, const Vector& r
 		}
 		Vector resO,resD;
 		obj_coll.diffusion(resO,resD);
-		photonTracing(resO,resD,rayC,depth+1,r,lambda*obj->getMaterial().diff,dist+obj_coll.dist,diff_count+1);
+		photonTracing(resO,resD,rayC*obj->getColor(obj_coll.C),depth+1,r,lambda*obj->getMaterial().diff,dist+obj_coll.dist,diff_count+1);
 	}
 }
 
 void ProgressivePhotonMapping::RayTracing(const Vector& rayO,const Vector& rayD,Color rayC,int xx,int yy,int depth,double lambda,double dist) {
-	if (lambda < 1e-3 || depth > max_depth)
+	if (lambda < 1e-6 || depth > max_depth)
 		return ;
 	Collision obj_coll,lgt_coll;
 	const Object* obj = findCollidedObject(rayO,rayD,obj_coll);

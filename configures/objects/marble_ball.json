@@ -1,0 +1,9 @@
+{
+	"type":"sphere",
+	"name":"marble_ball",
+	"center":{"x":4,"y":4,"z":25},
+	"radius":2,
+	"texture": { "type":"picture", "filename":"materials/marble.bmp", "rx":2, "ry":3.14 },
+	"absorb": {"type":"pure","r":0.5,"g":0.7,"b":0.5},
+	"material":{"refl":0.0,"diff":1.0,"spec":0.6,"refr":0.0,"refr_k":1.3}
+} 

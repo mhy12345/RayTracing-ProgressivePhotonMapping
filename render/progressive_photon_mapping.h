@@ -47,6 +47,7 @@ class ProgressivePhotonMapping : private Scene, public Render{
 
 		int max_depth;
 		int start_rows;
+		int start_cols;
 		int bazier_quality;
 		int total_round;
 		int photon_num;

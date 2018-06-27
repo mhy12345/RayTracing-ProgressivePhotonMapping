@@ -6,7 +6,7 @@
 	"dy":{"x":0,"y":20,"z":0},
 	"texture":{
 		"type":"picture",
-		"filename":"materials/floor3.jpg",
+		"filename":"materials/floor.jpg",
 		"rx":8,
 		"ry":8
 	},
