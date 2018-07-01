@@ -6,9 +6,9 @@
 	"_rx" : 5,
 	"_ry" : 10,
 	"photon_num" : 10000,
-	"total_round":40,
-	"total_brightness":30.0,
-	"round_decay" : 0.90,
+	"total_round":60,
+	"total_brightness":20.0,
+	"round_decay" : 0.92,
 	"initial_r" : 5,
 	"r_decay" : 0.8,
 	"camera": 
@@ -23,8 +23,9 @@
 	],
 	"objects" : [ 
 	],
-	"bg_color" : {"type":"pure","r":0,"g":0,"b":0},
+	"bg_color" : {"type":"pure","r":0.0,"g":0.0,"b":0.0},
 	"max_depth" : 20,
 	"max_jump" : 20,
-	"start_rows" : 0
+	"start_rows" : 0,
+	"start_cols" : 0
 }

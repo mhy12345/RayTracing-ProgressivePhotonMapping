@@ -96,7 +96,7 @@ bool BazierCurve::collideWith(const Vector& rayO,const Vector& rayD,Collision& c
 	collision.dist = 1e100;
 	if (!checkCollision(rayO,rayD))
 		return false;
-	for (int cnt=0;cnt<25 ;cnt++){
+	for (int cnt=0;cnt<35 ;cnt++){
 		double lr = .7;
 		double t;
 		double u;

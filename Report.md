@@ -1,4 +1,21 @@
-直线与圆求交
+# 图形学大作业实验报告
+
+# 结果图
+
+![](/Users/toby/Documents/Cources/08-图形学/project/results/Final.bmp)
+
+*注：可能存在一点误解，橙色求折射的是曲面物体的底座而非顶部，因此没有球的像。
+
+# 得分点
+
+* 光线追踪算法（RayTracing）[render/raytracing.cpp]
+* 基于路径hash的抗锯齿算法[render/raytracing.cpp:123]
+* 渐进式光子映射算法（ProgressivePhotonMapping）[render/progressive\_photon\_mapping.cpp]
+* OpenMP性能加速[render/progressive\_photon\_mapping.cpp:57]
+* 碰撞盒加速[objects/bazier_curve.cpp:36]
+* KD树加速[render/progressive\_photon\_mapping.cpp:78]
+* 分段贝塞尔曲线[objects/bazier_curve.cpp]
+* 物体贴图
 
 ## 性能加速
 
@@ -13,6 +30,12 @@
 在贝塞尔曲线求交期间，通过圆柱体包围盒，优先判断光线是否与包围盒有交点。
 
 ### KD树
+
+在光线追踪部分，我使用KD树寻找距离小于R的碰撞点。KD树本身使用基于轮换分割维度建树的方式。
+
+
+## 光线追踪
+![](/Users/toby/Documents/Cources/08-图形学/project/results/RayTracing-v1.1.bmp)
 
 
 
@@ -115,3 +138,11 @@ $$
 * 牛顿迭代需要保证答案中$u \in [0,1]$，而牛顿迭代本身无法附加条件，因此需要在答案的邻域中查找合适的$u$,$t$,$\theta$，我用到的方法是，对于给定曲线，生成一个圆柱体包含框，随机该圆柱体里面高度$h$的一个圆形面片，将光线与该面片的交点的$u$,$t$,$\theta$作为迭代的初值。随机$h$约30次即可得解。
 
 * 由于牛顿迭代不太精确，可能是的结果产生微小偏移，这种偏移会对判断点在平面哪一侧产生影响，我们可以通过调整eps的取值，不同部分赋予不同的eps，使得这些误差不至于相互影响。
+
+曲线控制点为
+
+![](/Users/toby/Documents/Cources/08-图形学/project/results/bazier_curve.png)
+
+
+## 纹理贴图
+![](/Users/toby/Documents/Cources/08-图形学/project/materials/marble.bmp)
