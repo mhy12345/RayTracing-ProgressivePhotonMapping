@@ -60,6 +60,8 @@ void ProgressivePhotonMapping::run() {
 #endif
 		for (int i=start_rows;i<rx;i++)
 		{
+			if (i % 100 == 0)
+				cout<<"Render row "<<i<<endl;
 			for (int j=start_cols;j<ry;j++) {
 				double _i = i + (rand()*1.0/RAND_MAX-.5)*1;
 				double _j = j + (rand()*1.0/RAND_MAX-.5)*1;
@@ -86,6 +88,8 @@ void ProgressivePhotonMapping::run() {
 #pragma omp for
 #endif
 			for (int i=0;i<lgt_emit_count;i++) {
+				if (i%1000 == 0)
+					cout<<"Sample Photon "<<i<<" / "<<lgt_emit_count<<endl;
 				Vector rayO,rayD;
 				lgt->randomlyEmit(rayO,rayD);
 				photonTracing(rayO,rayD,lgt->getColor(lgt->getCenter()),0,current_r,total_brightness/photon_num,0,0);

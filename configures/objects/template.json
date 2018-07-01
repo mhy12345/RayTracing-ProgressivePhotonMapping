@@ -5,10 +5,10 @@
 	"_ry" : 240,
 	"_rx" : 5,
 	"_ry" : 10,
-	"photon_num" : 10000,
-	"total_round":60,
+	"photon_num" : 20000,
+	"total_round":80,
 	"total_brightness":20.0,
-	"round_decay" : 0.92,
+	"round_decay" : 0.95,
 	"initial_r" : 5,
 	"r_decay" : 0.8,
 	"camera": 
@@ -17,7 +17,8 @@
 		"position" : {"x":20,"y":-10,"z":0 },
 		"dx" : {"x":-10,"y":0,"z":0},
 		"dy" : {"x":0,"y":20,"z":0},
-		"origin" : {"x":40,"y":0,"z":-50}
+		"origin" : {"x":40,"y":0,"z":-50},
+		"fdepth" : 0.1
 	},
 	"lights" : [ 
 	],
