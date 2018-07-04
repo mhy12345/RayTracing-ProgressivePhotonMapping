@@ -5,7 +5,7 @@
 
 # 结果图
 
-![](/Users/toby/Documents/Cources/08-图形学/project/results/Final.bmp)
+![](results/Final.bmp)
 
 *注：可能存在一点误解，橙色求折射的是曲面物体的底座而非顶部，因此没有球的像。
 
@@ -44,7 +44,7 @@
 
 在程序中使用了openmp加速，如并行多行渲染：
 
-![](/Users/toby/Documents/Cources/08-图形学/project/results/RayTracing-openmp.bmp)
+![](results/RayTracing-openmp.bmp)
 
 ## 算法加速
 
@@ -61,11 +61,11 @@
 
 普通的光线追踪算法支持反射折射等基本情形。
 
-![](/Users/toby/Documents/Cources/08-图形学/project/results/RayTracing-v1.0.bmp)
+![](results/RayTracing-v1.0.bmp)
 
 通过路径hash可以有效减少边缘锯齿效应。
 
-![](/Users/toby/Documents/Cources/08-图形学/project/results/RayTracing-v1.1.bmp)
+![](results/RayTracing-v1.1.bmp)
 
 
 
@@ -171,7 +171,7 @@ $$
 
 曲线控制点为
 
-![](/Users/toby/Documents/Cources/08-图形学/project/results/bazier_curve.png)
+![](results/bazier_curve.png)
 
 
 ## 纹理贴图
