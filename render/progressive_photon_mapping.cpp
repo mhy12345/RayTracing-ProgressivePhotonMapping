@@ -138,6 +138,7 @@ void ProgressivePhotonMapping::photonTracing(const Vector& rayO, const Vector& r
 					* lambda 
 					* (1.0/(diff_count+1))
 					* w->strength;
+#pragma omp critical
 				bg_pic[w->x * ry + w->y] += res;
 			}
 		}
