@@ -7,10 +7,11 @@
 
 ![](results/Final.bmp)
 
-*注：可能存在一点误解，橙色求折射的是曲面物体的底座而非顶部，因此没有球的像。
-
 # 工程介绍
+## 工程信息
+github地址：[RayTracing-ProgressivePhotonMaping](https://github.com/mhy12345/RayTracing-ProgressivePhotonMaping)
 
+详细教程地址：[教程地址](http://mhy12345.xyz/%E7%9C%9F%E5%AE%9E%E6%84%9F%E5%9B%BE%E5%83%8F%E6%B8%B2%E6%9F%93%E7%B3%BB%E5%88%97/)
 ##	 编译命令	
 
 `cmake -DCMAKE_CXX_COMPILER=/usr/local/bin/clang-omp++ 
